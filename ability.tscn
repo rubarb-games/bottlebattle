@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://clxpvqr5pbke6"]
+
+[ext_resource type="Script" uid="uid://b15ip6weljnks" path="res://generic_ability.gd" id="1_uvmqb"]
+[ext_resource type="Texture2D" uid="uid://cvwx7aib332dg" path="res://knife.png" id="2_uvmqb"]
+
+[node name="ability" type="ColorRect" node_paths=PackedStringArray("_ability_button_handle", "_ability_sprite")]
+z_index = 4
+offset_left = 544.0
+offset_top = 141.0
+offset_right = 584.0
+offset_bottom = 181.0
+script = ExtResource("1_uvmqb")
+_ability_name = "Strike"
+_ability_description = "FUCK OVER THE ENEMY"
+_ability_button_handle = NodePath("Button")
+_ability_sprite = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(20, 20)
+scale = Vector2(0.561797, 0.561797)
+texture = ExtResource("2_uvmqb")
+
+[node name="Button" type="Button" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
