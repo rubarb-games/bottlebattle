@@ -1,4 +1,4 @@
-extends Control
+class_name PlayerManager extends Control
 
 @export var _playerHandle:Control
 @export var _enemyHandle:Control
@@ -10,19 +10,48 @@ extends Control
 
 @export var _ability_indicator_handle:Control
 
+@export var _all_enemy_encounters:Array[EnemyData]
+
+@export var _default_enemy_encounter:EnemyData
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	G.execute_ability.connect(on_execute_ability)
 	
 	_ability_indicator_handle.modulate.a = 0
+	#update_health_values()
+	
+func start_gameplay_round():
+	start_new_encounter()
+	
+func end_gameplay_round():
+	pass
+
+func start_new_encounter():
+	var enc:EnemyData
+	if (_all_enemy_encounters.size() < 1):
+		print_rich("[color=RED]ALL ENEMY ENCOUNTERS EXHAUSTED!")
+		enc = _default_enemy_encounter
+	else:
+		enc = _all_enemy_encounters.pop_back()
+	
+	_enemyHealth = enc._health
 	update_health_values()
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
-
+	
 func update_health_values():
+	if (_playerHealth < 1):
+		player_die()
+		return
+		
+	if (_enemyHealth < 1):
+		enemy_die()
+		return
+	
 	_player_health_handle.value = _playerHealth
 	_enemy_health_handle.value = _enemyHealth
 
@@ -44,6 +73,12 @@ func ability_on_enemy():
 	
 func ability_in_center():
 	pass
+
+func player_die():
+	G.player_die.emit()
+	
+func enemy_die():
+	G.enemy_die.emit()
 
 func on_execute_ability(ability:AbilityData, combo:int):
 	pass

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=3 format=3 uid="uid://dlxjkgvyys8g2"]
+
+[ext_resource type="Texture2D" uid="uid://4q335xxs2p" path="res://icon.svg" id="1_54304"]
+[ext_resource type="Script" uid="uid://ktd83qrij437" path="res://enemy_data.gd" id="1_mudn5"]
+
+[resource]
+script = ExtResource("1_mudn5")
+_name = "Spotty teen"
+_description = "WOW, HOW AWKWARD"
+_health = 50
+_portrait = ExtResource("1_54304")
+metadata/_custom_type_script = "uid://ktd83qrij437"

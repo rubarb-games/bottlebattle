@@ -49,14 +49,15 @@ var _bottle_angular_velocity_treshold:float = 5
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	_combo_counter_handle.text = ""
+	reset_values()
 	
-	change_state(BottleStatus.IDLE)
+	#change_state(BottleStatus.IDLE)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if (_game_manager_handle._player_status != GameManager.PlayerStatus.IDLE):
+	if (_game_manager_handle._player_status != GameManager.PlayerStatus.IDLE \
+	or _game_manager_handle._round_status != GameManager.RoundStatus.GAMEPLAY):
 		return
 	
 	match _status:
@@ -116,6 +117,12 @@ func change_state(state:BottleStatus):
 			_status_label.text = "BOTTLE IS EVALUATING!"
 			eval_direction()
 			_status = state
+
+func start_gameplay_round():
+	change_state(BottleStatus.IDLE)
+	
+func end_gameplay_round():
+	change_state(BottleStatus.INACTIVE)
 
 func reset_values():
 	_combo_counter_handle.text = ""

@@ -37,6 +37,24 @@ func _process(delta):
 func execute():
 	pass
 
+func destroy():
+	self.queue_free()
+
+func set_normal():
+	_status = AbilityStatus.IDLE
+	
+func set_on_wheel():
+	_status = AbilityStatus.ON_WHEEL
+
+func set_loot():
+	_status = AbilityStatus.LOOT
+
+func is_loot():
+	return true if _status == AbilityStatus.LOOT else false
+	
+func is_on_wheel():
+	return true if _status == AbilityStatus.ON_WHEEL else false
+
 func on_mouse_entered():
 	G.display_tooltip.emit(_ability_name+"\n"+_ability_description)
 

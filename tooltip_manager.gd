@@ -1,4 +1,4 @@
-extends Control
+class_name TooltipManager extends Control
 
 @export var _tootlip_handle:Control
 @export var _tooltip_text:RichTextLabel
