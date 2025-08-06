@@ -19,6 +19,8 @@ var _status:Status = Status.INACTIVE
 @export var _all_enemy_abilities:Array[Ability]
 @export var _enemy_wheel:TextureRect
 
+@export var _temp_abilities:Array[Ability]
+
 @export var _shake_curve:Curve
 
 var _dragged_ability:Ability
@@ -47,17 +49,19 @@ func initialize_enemy():
 func add_encounter_abilities(encounter:EnemyData):
 	print_rich("[color=CORAL]OK, enemy encounter: "+str(encounter._description))
 	#remove_all_enemy_abilities()
+	_temp_abilities = []
 	
 	for a in encounter._enemy_abilities:
 		var i
 		if (a._ability_type == AbilityData.Type.DEBUFF):
 			i = add_ability(a,true,randf_range(0,360))
+			_temp_abilities.append(i)
+			update_ability_layout_single(_bottle_center_marker,_all_abilities,i)
 		else:
 			i = add_ability(a,false)
 		i.set_enemy()
 		
 	update_ability_layout_random(_enemy_bottle_center,_all_enemy_abilities)
-	update_ability_layout_distributed(_bottle_center_marker,_all_abilities)
 
 func start_gameplay_round():
 	_status = Status.ACTIVE
@@ -65,6 +69,8 @@ func start_gameplay_round():
 func end_gameplay_round():
 	_status = Status.INACTIVE
 	remove_all_enemy_abilities()
+	for i in _temp_abilities:
+		remove_ability(i)
 
 func add_initial_abilities():
 	for a in _initial_abilities:
@@ -113,6 +119,11 @@ func add_ability(a:AbilityData,addToPlayer:bool = true, pos:float = -1) -> Abili
 	else:
 		_all_enemy_abilities.append(instance)
 	return instance
+
+func update_ability_layout_single(centerpoint:Marker2D,abilities:Array,ability:Ability):
+		var wp = ability._wheel_placement
+		ability.position = centerpoint.global_position + (Vector2.RIGHT.rotated(deg_to_rad(wp)) * _distance_to_center)
+		ability.position -= ability.size / 2
 
 func update_ability_layout_distributed(centerpoint:Marker2D,abilities:Array):
 	for i in range(abilities.size()):
