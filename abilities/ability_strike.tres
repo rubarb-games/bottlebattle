@@ -8,4 +8,6 @@ script = ExtResource("1_xljkf")
 _ability_name = "Strike"
 _ability_description = "Deal 5 damage"
 _ability_icon = ExtResource("1_t3psd")
+_magnitude = 5
+_initial_placement = -1.0
 metadata/_custom_type_script = "uid://crb7n5yxpbd5t"

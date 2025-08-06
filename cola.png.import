@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ci4ne6t7f365u"
-path="res://.godot/imported/0008696_pepsi-max-15-liter_510.jpeg-092a6913f7dd24887b1ed69e4852ade4.ctex"
+uid="uid://d2wcu3k4oas84"
+path="res://.godot/imported/cola.png-b271a013a6ae0e511f1ddbf14189795f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://0008696_pepsi-max-15-liter_510.jpeg"
-dest_files=["res://.godot/imported/0008696_pepsi-max-15-liter_510.jpeg-092a6913f7dd24887b1ed69e4852ade4.ctex"]
+source_file="res://cola.png"
+dest_files=["res://.godot/imported/cola.png-b271a013a6ae0e511f1ddbf14189795f.ctex"]
 
 [params]
 

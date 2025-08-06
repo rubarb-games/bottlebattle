@@ -6,6 +6,8 @@
 [resource]
 script = ExtResource("2_ysofw")
 _ability_name = "Heavy blow"
-_ability_description = "Deal 10 damage. Wow!!"
+_ability_description = "Deal 9 damage. Wow!!"
 _ability_icon = ExtResource("1_berf2")
+_magnitude = 9
+_initial_placement = 180.0
 metadata/_custom_type_script = "uid://crb7n5yxpbd5t"

@@ -6,6 +6,13 @@ var _status:Status = Status.INACTIVE
 @export var _gm_handle:GameManager
 
 @export var _loot_window:Control
+@export var _loot_skip_button:Button
+@export var _loot_chest_button:Button
+
+var _skip_reward:int = 10
+var _pressed_chest_button:bool = false
+
+@export var _loot_placement_marker:Marker2D
 @export var _loot_spacing:float = 40.0
 
 @export var _loot_pool:Array[AbilityData]
@@ -21,6 +28,11 @@ func _ready() -> void:
 	G.round_loot_end.connect(on_loot_end)
 	
 	G.add_ability.connect(on_add_ability)
+	
+	_loot_skip_button.pressed.connect(on_pressed_skip_button)
+	_loot_chest_button.pressed.connect(on_pressed_chest_button)
+	
+	_loot_window.visible = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -47,10 +59,12 @@ func add_encounter_loot():
 	for i in range(_loot_per_encounter):
 		var loot = _loot_pool.pick_random()
 		var instance = add_loot(loot)
-		instance.position.x = _loot_spacing * i
+		instance.global_position = _loot_placement_marker.global_position
+		instance.position.x += _loot_spacing * i - (_loot_per_encounter * _loot_spacing / 2)
 
 func loot_picked():
-	G.round_gameplay_start.emit()
+	G.loot_picked.emit()
+	#G.round_gameplay_start.emit()
 
 func display_loot_window():
 	_loot_window.visible = true
@@ -58,6 +72,28 @@ func display_loot_window():
 func hide_loot_window():
 	_loot_window.visible = false
 
+func on_pressed_skip_button():
+	G.adjust_cash.emit(_skip_reward)
+	loot_picked()
+
+func set_skip_reward(rew:int):
+	_skip_reward = rew
+	_loot_skip_button.text = "SKIP " + "("+str(_skip_reward)+"c bonus)"
+
+func disable_chest():
+	_loot_chest_button.disabled = true
+	_loot_chest_button.visible = false
+
+func enable_chest():
+	_loot_chest_button.disabled = false
+	_loot_chest_button.visible = true
+	
+func on_pressed_chest_button():
+	disable_chest()
+	add_encounter_loot()
+	set_skip_reward(0)
+	_pressed_chest_button = true
+	
 func on_add_ability(a:Ability,fromLoot:bool):
 	if fromLoot:
 		remove_loot(a)
@@ -65,8 +101,9 @@ func on_add_ability(a:Ability,fromLoot:bool):
 		loot_picked()
 
 func on_loot_start():
+	set_skip_reward(10)
+	enable_chest()
 	display_loot_window()
-	add_encounter_loot()
 	
 func on_loot_end():
 	hide_loot_window()

@@ -32,7 +32,7 @@ func on_hide_tooltip():
 
 func on_popup_text(text:String, pos:Vector2):
 	_text_popup_handle.position = pos
-	_text_popup_handle.position.x += _text_popup_handle.size.x / 2
+	_text_popup_handle.position.x -= _text_popup_handle.size.x / 2
 	_text_popup_text_handle.text = text
 	SimonTween.start_tween(_text_popup_handle,"modulate:a",1.0,1.25,_text_popup_curve).set_relative(true)
 	SimonTween.start_tween(_text_popup_handle,"position:y",-50.0,0.2).set_relative(true)

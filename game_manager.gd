@@ -3,9 +3,15 @@ class_name GameManager extends Control
 enum PlayerStatus { IDLE, DRAGGING, INACTIVE, OTHER }
 var _player_status:PlayerStatus = PlayerStatus.IDLE
 
-@export var _status_label:Label
+@export var _encounter_list:Array[GameEncounters]
+@export var _default_encounter:GameEncounters
 
-enum RoundStatus { GAMEPLAY, IN_PROGRESS, LOOT, OTHER, GAMEOVER }
+@export var _status_label:Label
+@export var _cash_label:Label
+
+var _state_delay:float = 1.0
+
+enum RoundStatus { GAMEPLAY, IN_PROGRESS, LOOT, OTHER, GAMEOVER, SHOP }
 var _round_status:RoundStatus = RoundStatus.GAMEPLAY
 
 @export var _bottle_manager_handle:BottleManager
@@ -35,18 +41,33 @@ func _ready():
 	G.player_die.connect(on_player_die)
 	G.enemy_die.connect(on_enemy_die)
 	
+	G.adjust_cash.connect(on_adjust_cash)
+	G.loot_picked.connect(on_loot_picked)
+	
 	initialize()
 	
 func initialize():
-	G.round_gameplay_start.emit()
+	change_round_status(RoundStatus.GAMEPLAY)
+	G.adjust_cash.emit(0)
 
-
+func get_next_encounter():
+	var enc:GameEncounters = _encounter_list.pop_back()
+	if (!enc):
+		enc = _default_encounter
+		
+	match enc._type:
+		GameEncounters.Type.ENCOUNTER:
+			change_round_status(RoundStatus.GAMEPLAY)
+		GameEncounters.Type.LOOT:
+			change_round_status(RoundStatus.LOOT)
+		GameEncounters.Type.SHOP:
+			change_round_status(RoundStatus.SHOP)
 
 func change_round_status(rs:RoundStatus):
 	#Exiting previous state
 	match _round_status:
 		RoundStatus.GAMEPLAY:
-			G.round_gameover_end.emit()
+			G.round_gameplay_end.emit()
 		RoundStatus.LOOT:
 			G.round_loot_end.emit()
 		RoundStatus.IN_PROGRESS:
@@ -56,22 +77,23 @@ func change_round_status(rs:RoundStatus):
 		RoundStatus.GAMEOVER:
 			G.round_gameover_end.emit()
 	
+	await get_tree().create_timer(_state_delay).timeout
+	
 	#Entering new state
 	match rs:
 		RoundStatus.GAMEPLAY:
 			_round_status = rs
+			G.round_gameplay_start.emit()
 		RoundStatus.LOOT:
 			_round_status = rs
+			G.round_loot_start.emit()
 		RoundStatus.IN_PROGRESS:
 			_round_status = rs
 		RoundStatus.OTHER:
 			_round_status = rs
 		RoundStatus.GAMEOVER:
 			_round_status = rs
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
+			G.round_gameover_start.emit()
 
 func is_loot_phase():
 	return true if _round_status == RoundStatus.LOOT else false
@@ -98,17 +120,20 @@ func on_stop_dragging(a:Ability):
 	_player_status = PlayerStatus.IDLE
 
 func on_round_gameplay_start():
-	change_round_status(RoundStatus.GAMEPLAY)
+	await get_tree().process_frame
+	#change_round_status(RoundStatus.GAMEPLAY)
 	
 	_bottle_manager_handle.start_gameplay_round()
 	_ability_wheel_manager_handle.start_gameplay_round()
 	_player_manager_handle.start_gameplay_round()
 	
 func on_round_gameplay_end():
-	pass
+	_bottle_manager_handle.end_gameplay_round()
+	_player_manager_handle.end_gameplay_round()
+	_ability_wheel_manager_handle.end_gameplay_round()
 	
 func on_round_loot_start():
-	change_round_status(RoundStatus.LOOT)
+	#change_round_status(RoundStatus.LOOT)
 	
 	_status_label.text = "LOOT PHASE!"
 	
@@ -128,11 +153,21 @@ func on_round_gameover_start():
 	
 func on_round_gameover_end():
 	pass
+	
+func on_adjust_cash(adjustment:int):
+	await get_tree().process_frame
+	_cash_label.text = "Coins: "+str(_player_manager_handle._playerCash)+"c"
 
 func on_player_die():
-	G.round_gameplay_end.emit()
-	G.round_gameover_start.emit()
+	change_round_status(RoundStatus.GAMEOVER)
+	#G.round_gameplay_end.emit()
+	#G.round_gameover_start.emit()
 	
 func on_enemy_die():
-	G.round_gameplay_end.emit()
-	G.round_loot_start.emit()
+	get_next_encounter()
+	#change_round_status(RoundStatus.LOOT)
+	#G.round_gameplay_end.emit()
+	#G.round_loot_start.emit()
+
+func on_loot_picked():
+	get_next_encounter()

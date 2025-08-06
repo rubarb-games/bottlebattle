@@ -40,6 +40,7 @@ class singleTween:
 	var breakLoop:bool = false
 	var snap_to_value:bool = false
 	var snap_to_start_value:bool = false
+	var slerp_mode:bool = false
 
 	var deltaValue:float
 	var totalTweenMovement:Variant
@@ -103,7 +104,8 @@ class singleTween:
 		if (rawProperty in obj):
 			indexed_property = false
 		else:
-			print("Dealing with indexed property")
+			pass
+			#print("Dealing with indexed property")
 			
 		time = timeArg
 		endResult = endResultArg
@@ -132,6 +134,10 @@ class singleTween:
 			obj.set_indexed(rawProperty,val)
 		else:
 			obj.set(rawProperty,val)
+			
+	func set_slerp(val):
+		slerp_mode = val
+		return self
 
 	func initiate_tween():
 		deltaValue = 0
@@ -163,7 +169,10 @@ class singleTween:
 			var deltaMod = modDMod - prevMod
 			modDMod = get_tweened_value() + deltaMod
 		else:
-			modDMod = lerp(get_tweened_value(),endResult,intCurve.sample(factor))
+			if (slerp_mode):
+				modDMod = lerp_angle(get_tweened_value(),endResult,intCurve.sample(factor))
+			else:
+				modDMod = lerp(get_tweened_value(),endResult,intCurve.sample(factor))
 
 		set_tweened_value(modDMod)
 		

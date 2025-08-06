@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="GameEncounters" load_steps=2 format=3 uid="uid://d6n8fvq47wan"]
+
+[ext_resource type="Script" uid="uid://boytcpiqoob6h" path="res://game_encounters.gd" id="1_ixa3w"]
+
+[resource]
+script = ExtResource("1_ixa3w")
+_type = 2
+metadata/_custom_type_script = "uid://boytcpiqoob6h"

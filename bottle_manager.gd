@@ -1,18 +1,35 @@
 class_name BottleManager extends Control
 
-enum BottleStatus { IDLE, SPINNING, INACTIVE, IN_PROGRESS, EVALUATING }
+enum BottleStatus { IDLE, SPINNING, INACTIVE, IN_PROGRESS, EVALUATING, ENEMY_TURN }
 var _status:BottleStatus = BottleStatus.INACTIVE
 
 @export var _ability_wheel_manager_handle:AbilityWheelManager
-@export var _game_manager_handle:GameManager
+@export var _gm_handle:GameManager
 
 @export var _button_handle: Button
 @export var _bottle_center:Marker2D
+@export var _all_bottle_handle:Control
+
+@export var _all_bottles_handle:Control
+
+@export var _all_enemy_bottle_handle:Control
+@export var _enemy_bottle_center:Marker2D
+@export var _enemy_button_handle:Button
+var _enemy_initial_spin_time:Vector2 = Vector2(0.5,1.2)
+var _enemy_spin_time_target:float = 0.0
+var _enemy_spin_time:float = 0.0
+var _enemy_spin_force:float = 0.0
+
+var _speed_treshold:float = 50.0
+var _time_between_rounds:float = 0.5
 
 @export var _spin_curve:Curve
 @export var _shake_curve:Curve
 @export var _spin_falloff_curve:Curve
 @export var _mouse_velocity_curve:Curve
+@export var _strike_curve:Curve
+@export var _distance_curve_falloff:Curve
+@export var _enemy_spin_falloff:Curve
 
 @export var _status_label:Label
 @export var _debug_handle_a: Label
@@ -22,11 +39,11 @@ var _status:BottleStatus = BottleStatus.INACTIVE
 @export var ability_arr:Array[ColorRect]
 var target_ability:ColorRect
 
-@export var _distance_curve_falloff:Curve
-
 var _combo_number: int = 0
 var _total_degrees_spun: float = 0.0
 @export var _combo_counter_handle:Label
+@export var _combo_handle:Control
+@export var _crit_handle:Label
 
 var _initial_spin_velocity:float = 0.0
 var _spinning_timer:float = 0.0
@@ -49,6 +66,8 @@ var _bottle_angular_velocity_treshold:float = 5
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	#G.round_gameplay_start.connect(on_game)
+	
 	reset_values()
 	
 	#change_state(BottleStatus.IDLE)
@@ -56,8 +75,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if (_game_manager_handle._player_status != GameManager.PlayerStatus.IDLE \
-	or _game_manager_handle._round_status != GameManager.RoundStatus.GAMEPLAY):
+	if (_gm_handle._player_status != GameManager.PlayerStatus.IDLE \
+	or _gm_handle._round_status != GameManager.RoundStatus.GAMEPLAY):
 		return
 	
 	match _status:
@@ -74,6 +93,8 @@ func _process(delta):
 			pass
 		BottleStatus.EVALUATING:
 			pass
+		BottleStatus.ENEMY_TURN:
+			process_enemy(delta)
 
 func get_input(delta):
 	if (Input.is_action_just_pressed("main_click")):
@@ -100,6 +121,7 @@ func get_input(delta):
 func change_state(state:BottleStatus):
 	match state:
 		BottleStatus.IDLE:
+			SimonTween.start_tween(_all_bottle_handle,"modulate",Color.WHITE,1)
 			_status_label.text = "BOTTLE IS IDLE!"
 			reset_values()
 			_status = state
@@ -112,11 +134,17 @@ func change_state(state:BottleStatus):
 		BottleStatus.IN_PROGRESS:
 			_status = state
 		BottleStatus.INACTIVE:
+			SimonTween.start_tween(_all_bottle_handle,"modulate",Color.DIM_GRAY,1)
 			_status = state
 		BottleStatus.EVALUATING:
 			_status_label.text = "BOTTLE IS EVALUATING!"
 			eval_direction()
 			_status = state
+		BottleStatus.ENEMY_TURN:
+			await get_tree().create_timer(_time_between_rounds).timeout
+			_status = state
+			setup_enemy_spin()
+			_status_label.text = "ENEMY TURN!"
 
 func start_gameplay_round():
 	change_state(BottleStatus.IDLE)
@@ -125,8 +153,7 @@ func end_gameplay_round():
 	change_state(BottleStatus.INACTIVE)
 
 func reset_values():
-	_combo_counter_handle.text = ""
-	_combo_number = 0
+	reset_combo()
 	
 	_mouse_speed_buildup = Vector2.ZERO
 	_bottle_angular_velocity = 0.0
@@ -180,6 +207,9 @@ func spin_bottle(delta):
 	
 	_total_degrees_spun += rad_to_deg(_bottle_angular_velocity * delta)
 	if (_total_degrees_spun > 360.0):
+		if (_combo_handle.modulate.a < 1):
+			#print("HELL YEAH; MORE COMMMMB")
+			SimonTween.start_tween(_combo_handle,"modulate:a",1.0,0.25)
 		_total_degrees_spun -= 360
 		_combo_number += 1
 		_combo_counter_handle.text = str(_combo_number)+"x \n SPINS!"
@@ -202,21 +232,92 @@ func eval_direction():
 		
 		var rotation_delta = rad_to_deg(_button_handle.rotation - goal_dir.angle())
 		var goal_angle = rad_to_deg(goal_dir.angle())
-		if (goal_angle < 0) :
-			goal_angle += 360.0
-		
-		if (rotation_delta < 5):
-			G.popup_text.emit("CRITICAL HIT!",top_ability.global_position)
-			_combo_number *= 2
-			_combo_counter_handle.text = str(_combo_number)+"x"
+		#if (goal_angle < 0) :
+		#	goal_angle += 360.0
+			
 			
 		print_rich("[color=RED] FOUND ABILITY AT: "+str(top_ability.name)+"- Rotation off by: "+str(rotation_delta)+" Rotation: "+str(rad_to_deg(_button_handle.rotation))+" - "+str(rad_to_deg(goal_dir.angle())))
-		await SimonTween.start_tween(_button_handle,"rotation",deg_to_rad(goal_angle),0.6).tween_finished
+		await SimonTween.start_tween(_button_handle,"rotation",deg_to_rad(goal_angle),0.6).set_slerp(true).tween_finished
 		SimonTween.start_tween(_button_handle,"scale",Vector2(0.2,0.2),0.5,_shake_curve).set_relative(true)
+		top_ability.bright_flash()
 		G.popup_text.emit(top_ability._ability_name,top_ability.global_position)
 		await SimonTween.start_tween(top_ability,"scale",Vector2(1.2,1.2),0.5,_shake_curve).set_relative(true).tween_finished
 		
-		G.execute_ability.emit(top_ability._data,_combo_number)
 		
-		change_state(BottleStatus.IDLE)
+		var mag = top_ability.get_magnitude()
+		await top_ability.damage_numbers_popup()
+		SimonTween.start_tween(_combo_counter_handle,"scale",Vector2(-0.5,-0.5),0.4,_strike_curve).set_relative(true)
+		await SimonTween.start_tween(_combo_counter_handle,"global_position",top_ability.global_position-_combo_counter_handle.global_position-(_combo_counter_handle.size/2),0.4,_strike_curve).set_relative(true).tween_finished
+		_combo_counter_handle.modulate.a = 0
+		top_ability.set_magnitude(mag * _combo_number)
+		await top_ability.damage_numbers_update(top_ability.get_magnitude())
+		
+		if (rotation_delta < 5):
+			await SimonTween.start_tween(_crit_handle,"modulate:a",1.0,0.1).tween_finished
+			SimonTween.start_tween(_crit_handle,"scale",Vector2(-0.5,-0.5),0.4,_strike_curve).set_relative(true)
+			await SimonTween.start_tween(_crit_handle,"global_position",top_ability.global_position-_crit_handle.global_position-(_crit_handle.size/2),0.4,_strike_curve).set_relative(true).tween_finished
+			_crit_handle.modulate.a = 0
+			top_ability.set_magnitude(top_ability.get_magnitude() * 2)
+			await top_ability.damage_numbers_update(top_ability.get_magnitude())
+		
+		await top_ability.damage_numbers_go_down()
+		SimonTween.start_tween(_combo_handle,"modulate:a",0.0,0.5)
+		#G.execute_ability.emit(top_ability,_combo_number,true)
+		_gm_handle._player_manager_handle.execute_ability(top_ability,top_ability.get_magnitude(),true)
+		top_ability.reset_magnitude()
+		#if (!continue_round):
+		if (_gm_handle._player_manager_handle.is_player_alive() and _gm_handle._player_manager_handle.is_enemy_alive()):
+			change_state(BottleStatus.ENEMY_TURN)
 				
+func setup_enemy_spin():
+	_enemy_spin_time_target = randf_range(_enemy_initial_spin_time.x,_enemy_initial_spin_time.y)
+	_enemy_spin_time = 0.0
+				
+func process_enemy(delta):
+	_enemy_spin_force = _enemy_spin_falloff.sample(_enemy_spin_time/_enemy_spin_time_target)
+	_enemy_button_handle.rotation += deg_to_rad(_enemy_spin_force) * delta
+	_enemy_spin_time += delta
+	# = 
+	
+	if (_enemy_spin_time > _enemy_spin_time_target):
+		eval_enemy()
+				
+func eval_enemy():
+	change_state(BottleStatus.IN_PROGRESS)
+	
+	var top_ability:Ability
+	var top_direction_match:float = -1.01
+	#_enemy_button_handle.rotation = deg_to_rad(randf_range(0,360))
+	for a in _ability_wheel_manager_handle._all_enemy_abilities:
+		var ability_dir = _enemy_bottle_center.global_position.direction_to(a.global_position)
+		var bottle_dir = Vector2.from_angle(_enemy_button_handle.rotation)
+		var d_p = bottle_dir.dot(ability_dir)
+		if (d_p > top_direction_match):
+			top_ability = a
+			top_direction_match = d_p
+
+	if (top_ability):	
+		var goal_dir = _enemy_bottle_center.global_position.direction_to(top_ability.global_position)
+		#_enemy_button_handle.rotation = deg_to_rad(fmod(rad_to_deg(_enemy_button_handle.rotation),360.0))
+		
+		var goal_angle = rad_to_deg(goal_dir.angle())
+		await SimonTween.start_tween(_enemy_button_handle,"rotation",deg_to_rad(goal_angle),0.4).set_slerp(true).tween_finished
+		await top_ability.damage_numbers_popup()
+		await top_ability.damage_numbers_go_down()
+		G.execute_ability.emit(top_ability,1,false)
+		change_state(BottleStatus.IDLE)
+						
+func reset_combo():
+	_combo_number = 0
+	if (_combo_handle.modulate.a > 0):
+		await SimonTween.start_tween(_combo_handle,"modulate:a",0.0,0.3).tween_finished
+		
+	if _crit_handle.modulate.a > 0:
+		SimonTween.start_tween(_crit_handle,"modulate:a",0.0,0.3)
+	_combo_counter_handle.text = ""
+	_combo_counter_handle.position = Vector2(0,0)
+	_combo_counter_handle.scale = Vector2(1,1)
+	_combo_counter_handle.modulate.a = 1
+	_crit_handle.position = Vector2(0,0)
+	_crit_handle.scale = Vector2(1,1)
+	_combo_handle.global_position = _all_bottle_handle.global_position - (_combo_handle.size/2)

@@ -1,9 +1,14 @@
 extends Node
 
+var ability_size = 40
+
 signal display_tooltip(text:String)
 signal hide_tooltip()
 
-signal execute_ability(ability:AbilityData,combo:int)
+signal execute_ability(ability:Ability,combo:int)
+signal loot_picked()
+
+signal start_encounter(encounter:EnemyData)
 
 signal popup_text(text:String, pos:Vector2)
 
@@ -11,6 +16,8 @@ signal dragging_ability(ab:Ability)
 signal stop_dragging_ability(ab:Ability)
 
 signal add_ability(ab:Ability,fromLoot:bool)
+
+signal adjust_cash(cash_adjustment:int)
 
 signal round_gameplay_end()
 signal round_gameplay_start()
