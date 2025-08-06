@@ -1,6 +1,6 @@
 class_name BottleManager extends Control
 
-enum BottleStatus { IDLE, SPINNING, INACTIVE, IN_PROGRESS, EVALUATING, ENEMY_TURN }
+enum BottleStatus { IDLE, CHARGING, SPINNING, INACTIVE, IN_PROGRESS, EVALUATING, ENEMY_TURN }
 var _status:BottleStatus = BottleStatus.INACTIVE
 
 @export var _ability_wheel_manager_handle:AbilityWheelManager
@@ -20,18 +20,22 @@ var _enemy_spin_time_target:float = 0.0
 var _enemy_spin_time:float = 0.0
 var _enemy_spin_force:float = 0.0
 
+var _speed_charging_treshold:float = 5
 var _speed_treshold:float = 50.0
 var _time_between_rounds:float = 0.5
 
 @export var _spin_curve:Curve
 @export var _shake_curve:Curve
+@export var _speed_buildup_falloff_curve:Curve
 @export var _spin_falloff_curve:Curve
 @export var _mouse_velocity_curve:Curve
 @export var _strike_curve:Curve
 @export var _distance_curve_falloff:Curve
 @export var _enemy_spin_falloff:Curve
+@export var _bottle_flash_curve:Curve
 
 @export var _status_label:Label
+@export var _charging_label:Label
 @export var _debug_handle_a: Label
 @export var _debug_handle_b: Label
 @export var _debug_handle_c: Label
@@ -44,25 +48,26 @@ var _total_degrees_spun: float = 0.0
 @export var _combo_counter_handle:Label
 @export var _combo_handle:Control
 @export var _crit_handle:Label
+@export var _bottle_flash_handle:ColorRect
 
 var _initial_spin_velocity:float = 0.0
 var _spinning_timer:float = 0.0
-@export var _spinning_timer_max:float = 1.5
+@export var _spinning_timer_max:float = 3.5
 
 var _main_click_pressed: bool = false
 var _secondary_click_pressed: bool = false
 
 var _last_mouse_position: Vector2 = Vector2.ZERO
 var _mouse_delta: Vector2 = Vector2.ZERO
-
+var _mouse_dampen_multipler:float = 5.0
 var _mouse_speed_buildup: Vector2 = Vector2.ZERO
 
 var _mouse_speed_multiplier: float = 1000.0
-var _bottle_rotation_multiplier: float = 1.0
 
+var _bottle_rotation_multiplier: float = 3.5
+var _bottle_dampen_multiplier: float = 3.0
 var _bottle_angular_velocity:float = 0.0
-
-var _bottle_angular_velocity_treshold:float = 5
+var _bottle_angular_velocity_treshold:float = 2
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -82,8 +87,14 @@ func _process(delta):
 	match _status:
 		BottleStatus.IDLE:
 			#check_rotation()
-			get_input(delta)
+			get_input_idle(delta)
 			calculate_bottle_rotation(delta)
+			check_idle_state()
+		BottleStatus.CHARGING:
+			get_input_charging(delta)
+			calculate_bottle_rotation(delta)
+			check_charging_state()
+			update_charging_power_label(delta)
 		BottleStatus.SPINNING:
 			spin_bottle(delta)
 			check_spinning()
@@ -98,25 +109,35 @@ func _process(delta):
 
 func get_input(delta):
 	if (Input.is_action_just_pressed("main_click")):
+		_mouse_speed_buildup = Vector2.ZERO
 		_main_click_pressed = true
 	elif (Input.is_action_just_released("main_click")):
 		_main_click_pressed = false
-		check_rotation()
+		#check_rotation()
 		
 	if (Input.is_action_just_pressed("right_click")):
 		_secondary_click_pressed = true
 	elif (Input.is_action_just_released("right_click")):
 		_secondary_click_pressed = false
-	
-	var mouse_position = get_global_mouse_position()
-	_mouse_delta = mouse_position - _last_mouse_position
-	_last_mouse_position = mouse_position
 
-	if (_main_click_pressed):
-		_mouse_speed_buildup += _mouse_delta * delta * _mouse_speed_multiplier
-		#Dampen speed buildup over time
-	_mouse_speed_buildup = lerp(_mouse_speed_buildup,Vector2.ZERO,delta * 2)
-	_debug_handle_a.text = "Mouse speed: "+str(Vector2(roundf(_mouse_speed_buildup.x*100)/100,roundf(_mouse_speed_buildup.y*100)/100))
+	get_mouse_delta(_main_click_pressed, delta)
+		
+func get_input_idle(delta):
+	get_input(delta)
+
+func get_input_charging(delta):
+	get_input(delta)
+
+func check_charging_state():
+	if (!_main_click_pressed and abs(_bottle_angular_velocity) > _speed_charging_treshold):
+		change_state(BottleStatus.SPINNING)
+		
+	if (!_main_click_pressed and abs(_bottle_angular_velocity) < _speed_charging_treshold):
+		change_state(BottleStatus.IDLE)
+	
+func check_idle_state():
+	if (_main_click_pressed and abs(_bottle_angular_velocity) > _speed_charging_treshold):
+		change_state(BottleStatus.CHARGING)
 
 func change_state(state:BottleStatus):
 	match state:
@@ -124,9 +145,16 @@ func change_state(state:BottleStatus):
 			SimonTween.start_tween(_all_bottle_handle,"modulate",Color.WHITE,1)
 			_status_label.text = "BOTTLE IS IDLE!"
 			reset_values()
+			shrink_charge_value()
+			_status = state
+		BottleStatus.CHARGING:
+			SimonTween.start_tween(_all_bottle_handle,"modulate",Color.WHITE,1)
+			flash_bottle()
+			_status_label.text = "CHARGING!"
 			_status = state
 		BottleStatus.SPINNING:
-			_status_label.text = "BOTTLE IS SPINNING!"
+			flash_bottle()
+			_status_label.text = "SPINNING!"
 			_spinning_timer = 0.0
 			_total_degrees_spun = 0.0
 			_initial_spin_velocity = _bottle_angular_velocity 
@@ -138,6 +166,7 @@ func change_state(state:BottleStatus):
 			_status = state
 		BottleStatus.EVALUATING:
 			_status_label.text = "BOTTLE IS EVALUATING!"
+			shrink_charge_value()
 			eval_direction()
 			_status = state
 		BottleStatus.ENEMY_TURN:
@@ -155,10 +184,13 @@ func end_gameplay_round():
 func reset_values():
 	reset_combo()
 	
+	_bottle_flash_handle.modulate.a = 0
 	_mouse_speed_buildup = Vector2.ZERO
 	_bottle_angular_velocity = 0.0
 	_last_mouse_position = get_global_mouse_position()
 	_main_click_pressed = false
+	
+	_charging_label.scale = Vector2.ZERO
 
 func check_rotation():
 	if (_bottle_angular_velocity >= _bottle_angular_velocity_treshold):
@@ -171,15 +203,16 @@ func check_spinning():
 func calculate_bottle_rotation(delta):
 	#get direction from angle
 	var bottle_dir:Vector2 = Vector2.RIGHT.rotated( _bottle_center.rotation) 
-	var bottle_cross = _spin_curve.sample(bottle_dir.dot(_mouse_speed_buildup))
+	#var bottle_cross = _spin_curve.sample(bottle_dir.dot(_mouse_speed_buildup))
 	
-	var max_axis
-	if (_mouse_speed_buildup.normalized().abs().x >= _mouse_speed_buildup.normalized().abs().y): 
-		max_axis = _mouse_speed_buildup.normalized().x
-	else:
-		max_axis = _mouse_speed_buildup.normalized().y * -1
-	max_axis *= -1
-	bottle_cross = _spin_curve.sample(max_axis)
+	#Get the mouse axis that has the strongest direction
+	#var max_axis
+	#if (_mouse_speed_buildup.normalized().abs().x >= _mouse_speed_buildup.normalized().abs().y): 
+	#	max_axis = _mouse_speed_buildup.normalized().x
+	#else:
+	#	max_axis = _mouse_speed_buildup.normalized().y * -1
+	#max_axis *= -1
+	#bottle_cross = _spin_curve.sample(max_axis)
 	
 	#Get mouse relative to center
 	var mouse_pos = get_global_mouse_position()
@@ -187,18 +220,50 @@ func calculate_bottle_rotation(delta):
 	var dir:Vector2 = distance.normalized()
 	dir = dir.rotated(deg_to_rad(-90))
 	var speedEval = _spin_curve.sample(dir.dot(_mouse_speed_buildup.normalized()))
-	#speedEval = lerp(speedEval,max_axis,_distance_curve_falloff.sample(distance.length()))
+	#REVISE THIS WITH SOMETHING BETTER!!!
+	#THIS ADDS TO THE VELOCITY
+	#* _mouse_speed_buildup.length()
+	var tempMultiplier = _bottle_rotation_multiplier * (1 - _speed_buildup_falloff_curve.sample(_bottle_angular_velocity / _speed_treshold))
+	var tempVelocity = deg_to_rad(speedEval * tempMultiplier * _mouse_speed_buildup.length())
 	
-	#_bottle_angular_velocity += deg_to_rad(bottle_cross * _bottle_rotation_multiplier * _mouse_speed_buildup.length() * delta)
-	_bottle_angular_velocity += deg_to_rad(speedEval * _bottle_rotation_multiplier * _mouse_speed_buildup.length() * delta)
-	_bottle_angular_velocity = clamp(lerp(_bottle_angular_velocity,0.0,delta*0.1),-_bottle_angular_velocity_treshold*10, _bottle_angular_velocity_treshold*10)
+	_bottle_angular_velocity = lerp(_bottle_angular_velocity,_bottle_angular_velocity+tempVelocity, delta)
+	dampen_bottle_spin(delta)
+#_bottle_angular_velocity = clamp(lerp(_bottle_angular_velocity,0.0,delta*0.1),-_bottle_angular_velocity_treshold*10, _bottle_angular_velocity_treshold*10)
 	
-	_button_handle.rotation += _bottle_angular_velocity * delta# * _bottle_rotation_multiplier
-	_debug_handle_b.text = "Bottle cross value: "+str(roundf(_bottle_angular_velocity*100)/100)
-	if (_bottle_angular_velocity > _bottle_angular_velocity_treshold):
-		_button_handle.modulate.b = 0.5
+	_button_handle.rotation +=  _bottle_angular_velocity * delta# * _bottle_rotation_multiplier
+	
+func dampen_bottle_spin(delta):
+	#if (_main_click_pressed):
+	#	return
+	#THIS JUST DAMPENS THE ANGULAR VELOCITY
+	if (_bottle_angular_velocity >= 0):
+		_bottle_angular_velocity = clamp(_bottle_angular_velocity - (delta * _bottle_dampen_multiplier),0,_speed_treshold)
 	else:
-		_button_handle.modulate.b = 1.0
+		_bottle_angular_velocity = clamp(_bottle_angular_velocity + (delta * _bottle_dampen_multiplier),-_speed_treshold,0)
+	
+	#_bottle_angular_velocity = clamp(_bottle_angular_velocity,-_bottle_angular_velocity_treshold,_bottle_angular_velocity_treshold)
+	
+	
+func get_mouse_delta(is_mouse_clicked:bool, delta):
+	var mouse_position = get_global_mouse_position()
+	_mouse_delta = mouse_position - _last_mouse_position
+	_last_mouse_position = mouse_position
+	
+	if (is_mouse_clicked):
+		var mouse_force = _mouse_speed_buildup.length()
+		#_mouse_delta * delta * _mouse_speed_multiplier
+		_mouse_speed_buildup += (_mouse_delta * delta * _mouse_speed_multiplier)
+	_mouse_speed_buildup = lerp(_mouse_speed_buildup,Vector2.ZERO,delta * _mouse_dampen_multipler)
+	_debug_handle_a.text = "Mouse speed: "+str(Vector2(roundf(_mouse_speed_buildup.x*100)/100,roundf(_mouse_speed_buildup.y*100)/100))
+
+	
+func update_charging_power_label(delta):
+	_charging_label.text = str(roundf(_bottle_angular_velocity))
+	var scale_factor = (_bottle_angular_velocity / _bottle_angular_velocity_treshold)
+	_charging_label.scale = Vector2(1 + scale_factor,1 + scale_factor)
+	
+	_charging_label.rotation = deg_to_rad(randf_range(-scale_factor,scale_factor))
+	pass
 
 func spin_bottle(delta):
 	_spinning_timer += delta
@@ -269,6 +334,10 @@ func eval_direction():
 		if (_gm_handle._player_manager_handle.is_player_alive() and _gm_handle._player_manager_handle.is_enemy_alive()):
 			change_state(BottleStatus.ENEMY_TURN)
 				
+				
+func shrink_charge_value():
+	SimonTween.start_tween(_charging_label,"scale",Vector2.ZERO,0.3)
+				
 func setup_enemy_spin():
 	_enemy_spin_time_target = randf_range(_enemy_initial_spin_time.x,_enemy_initial_spin_time.y)
 	_enemy_spin_time = 0.0
@@ -306,6 +375,9 @@ func eval_enemy():
 		await top_ability.damage_numbers_go_down()
 		G.execute_ability.emit(top_ability,1,false)
 		change_state(BottleStatus.IDLE)
+						
+func flash_bottle():
+	SimonTween.start_tween(_bottle_flash_handle,"modulate:a",0.5,1.0,_bottle_flash_curve).set_relative(true)
 						
 func reset_combo():
 	_combo_number = 0

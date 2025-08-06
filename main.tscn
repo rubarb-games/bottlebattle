@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cqow47bch5ocs"]
+[gd_scene load_steps=30 format=3 uid="uid://cqow47bch5ocs"]
 
 [ext_resource type="Texture2D" uid="uid://xqs47jqm2t0r" path="res://Circle.png" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://q6u8j6egr3nq" path="res://game_manager.gd" id="1_ig7tw"]
@@ -22,13 +22,17 @@
 
 [sub_resource type="Curve" id="Curve_h2yge"]
 _limits = [-1.0, 1.0, -1.0, 1.0]
-_data = [Vector2(-1, -1), 0.0, 0.0, 0, 0, Vector2(-0.419214, -1), 0.0, 0.0, 0, 0, Vector2(0.00436687, 0.0247321), 3.79292, 3.79292, 0, 0, Vector2(0.427948, 0.935697), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(-1, -1), 0.0, 0.0, 0, 0, Vector2(-0.419214, -1), 0.0, 0.0, 0, 0, Vector2(0.00436687, 0.0247321), 8.04708, 8.04708, 0, 0, Vector2(0.43913, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 5
 
 [sub_resource type="Curve" id="Curve_lquwl"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.0633188, 0.871393), 0.0, 0.0, 0, 0, Vector2(0.272926, -0.757626), 0.0, 0.0, 0, 0, Vector2(0.449782, 0.0568838), 0.0, 0.0, 0, 0, Vector2(0.740175, -0.0395713), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 6
+
+[sub_resource type="Curve" id="Curve_cegan"]
+_data = [Vector2(0, 0), 0.0, 3.36552, 0, 0, Vector2(0.184874, 0.492107), 1.94361, 1.94361, 0, 0, Vector2(0.55042, 0.902526), 0.502763, 0.502763, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
 
 [sub_resource type="Curve" id="Curve_7mycd"]
 _limits = [0.0, 1.0, 0.0, 3.0]
@@ -39,6 +43,10 @@ point_count = 3
 _limits = [0.0, 1500.0, 0.0, 1.0]
 _data = [Vector2(0, 465.708), 0.0, 37596.9, 0, 0, Vector2(0.0898345, 1500), 0.0, 0.0, 0, 0, Vector2(0.561466, 1500), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
+
+[sub_resource type="Curve" id="Curve_82xsv"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.012605, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.00986576), 0.0, 0.0, 0, 0]
+point_count = 3
 
 [sub_resource type="Curve" id="Curve_2cqfq"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
@@ -304,11 +312,20 @@ offset_right = 25.0
 offset_bottom = -98.0
 
 [node name="Sprite2D" type="Sprite2D" parent="AllBottles/BottleParent/Bottle/BottleButton"]
+clip_children = 2
 z_index = 1
 position = Vector2(254, 252)
 rotation = 1.5708
 scale = Vector2(0.632274, 0.632274)
 texture = ExtResource("2_1bvp3")
+
+[node name="BottleFlash" type="ColorRect" parent="AllBottles/BottleParent/Bottle/BottleButton/Sprite2D"]
+clip_contents = true
+offset_left = -241.984
+offset_top = -249.892
+offset_right = -201.984
+offset_bottom = -209.892
+scale = Vector2(12.7944, 12.7944)
 
 [node name="bottleCenter" type="Marker2D" parent="AllBottles/BottleParent/Bottle/BottleButton"]
 position = Vector2(258, 262)
@@ -519,7 +536,7 @@ _player_manager_handle = NodePath("../PlayerManager")
 _tooltip_manager_handle = NodePath("../TooltipManager")
 _ability_wheel_manager_handle = NodePath("../AbilityWheelManager")
 
-[node name="BottleManager" type="Control" parent="Managers" node_paths=PackedStringArray("_ability_wheel_manager_handle", "_gm_handle", "_button_handle", "_bottle_center", "_all_bottle_handle", "_all_bottles_handle", "_all_enemy_bottle_handle", "_enemy_bottle_center", "_enemy_button_handle", "_status_label", "_debug_handle_a", "_debug_handle_b", "_debug_handle_c", "ability_arr", "_combo_counter_handle", "_combo_handle", "_crit_handle")]
+[node name="BottleManager" type="Control" parent="Managers" node_paths=PackedStringArray("_ability_wheel_manager_handle", "_gm_handle", "_button_handle", "_bottle_center", "_all_bottle_handle", "_all_bottles_handle", "_all_enemy_bottle_handle", "_enemy_bottle_center", "_enemy_button_handle", "_status_label", "_charging_label", "_debug_handle_a", "_debug_handle_b", "_debug_handle_c", "ability_arr", "_combo_counter_handle", "_combo_handle", "_crit_handle", "_bottle_flash_handle")]
 anchors_preset = 0
 offset_left = -309.0
 offset_top = -256.0
@@ -537,17 +554,21 @@ _enemy_bottle_center = NodePath("../../AllBottles/EnemyBottleParent/EnemyBottle/
 _enemy_button_handle = NodePath("../../AllBottles/EnemyBottleParent/EnemyBottle/BottleButton")
 _spin_curve = SubResource("Curve_h2yge")
 _shake_curve = SubResource("Curve_lquwl")
+_speed_buildup_falloff_curve = SubResource("Curve_cegan")
 _spin_falloff_curve = SubResource("Curve_7mycd")
 _strike_curve = ExtResource("14_vivmo")
 _enemy_spin_falloff = SubResource("Curve_yaehf")
+_bottle_flash_curve = SubResource("Curve_82xsv")
 _status_label = NodePath("../../UI/RoundTimer_Label")
-_debug_handle_a = NodePath("../../UI/RoundTimer_Label2")
-_debug_handle_b = NodePath("../../UI/RoundTimer_Label3")
-_debug_handle_c = NodePath("../../UI/RoundTimer_Label4")
+_charging_label = NodePath("../../UI/ChargingPower_label")
+_debug_handle_a = NodePath("../../UI/DebugHandle_A_label")
+_debug_handle_b = NodePath("../../UI/DebugHandle_B_label")
+_debug_handle_c = NodePath("../../UI/DebugHandle_C_label")
 ability_arr = [null, null, null, null, null]
 _combo_counter_handle = NodePath("../../UI/Combo/ComboCounter_Label")
 _combo_handle = NodePath("../../UI/Combo")
 _crit_handle = NodePath("../../UI/Combo/CriticalHItLabel")
+_bottle_flash_handle = NodePath("../../AllBottles/BottleParent/Bottle/BottleButton/Sprite2D/BottleFlash")
 
 [node name="AbilityWheelManager" type="Control" parent="Managers" node_paths=PackedStringArray("_gm_handle", "_bottle_center_marker", "_ability_wheel_bg", "_ability_parent", "_enemy_bottle_center", "_enemy_bottle_button", "_enemy_wheel")]
 anchors_preset = 0
@@ -636,6 +657,23 @@ grow_vertical = 2
 text = "ROUND TIMER"
 horizontal_alignment = 1
 
+[node name="ChargingPower_label" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -72.0
+offset_top = 244.0
+offset_right = 78.0
+offset_bottom = 268.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(75, 12)
+text = "Charging power"
+horizontal_alignment = 1
+
 [node name="Cash_label" type="Label" parent="UI"]
 layout_mode = 1
 anchors_preset = -1
@@ -648,46 +686,43 @@ offset_bottom = 625.0
 grow_horizontal = 2
 text = "Coins: Xc"
 
-[node name="RoundTimer_Label2" type="Label" parent="UI"]
-visible = false
+[node name="DebugHandle_A_label" type="Label" parent="UI"]
 modulate = Color(0.569599, 0.79559, 0.233756, 1)
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 4.0
-offset_top = 444.0
-offset_right = 404.0
-offset_bottom = 467.0
-grow_horizontal = 2
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 18.0
+offset_top = -11.0
+offset_right = 418.0
+offset_bottom = 12.0
+grow_vertical = 2
 text = "Debug #1"
 
-[node name="RoundTimer_Label3" type="Label" parent="UI"]
-visible = false
+[node name="DebugHandle_B_label" type="Label" parent="UI"]
 modulate = Color(0.932301, 0.589725, 0.754135, 1)
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 7.0
-offset_top = 483.0
-offset_right = 407.0
-offset_bottom = 506.0
-grow_horizontal = 2
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 18.0
+offset_top = 24.5
+offset_right = 418.0
+offset_bottom = 47.5
+grow_vertical = 2
 text = "Debug #2"
 
-[node name="RoundTimer_Label4" type="Label" parent="UI"]
-visible = false
+[node name="DebugHandle_C_label" type="Label" parent="UI"]
 modulate = Color(0.467501, 0.743964, 0.956831, 1)
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 7.0
-offset_top = 524.0
-offset_right = 407.0
-offset_bottom = 547.0
-grow_horizontal = 2
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 18.0
+offset_top = 59.5
+offset_right = 418.0
+offset_bottom = 82.5
+grow_vertical = 2
 text = "Debug #2"
 
 [node name="Combo" type="TextureRect" parent="UI"]

@@ -49,10 +49,15 @@ func add_encounter_abilities(encounter:EnemyData):
 	#remove_all_enemy_abilities()
 	
 	for a in encounter._enemy_abilities:
-		var i = add_ability(a,false)
+		var i
+		if (a._ability_type == AbilityData.Type.DEBUFF):
+			i = add_ability(a,true,randf_range(0,360))
+		else:
+			i = add_ability(a,false)
 		i.set_enemy()
 		
 	update_ability_layout_random(_enemy_bottle_center,_all_enemy_abilities)
+	update_ability_layout_distributed(_bottle_center_marker,_all_abilities)
 
 func start_gameplay_round():
 	_status = Status.ACTIVE
@@ -89,7 +94,7 @@ func remove_ability(a:Ability):
 	_all_abilities.erase(a)
 	a.destroy()
 	
-func add_ability(a:AbilityData,addToPlayer:bool = true) -> Ability:
+func add_ability(a:AbilityData,addToPlayer:bool = true, pos:float = -1) -> Ability:
 	var instance = _ability_scene.instantiate() as Ability
 	_ability_parent.add_child(instance)
 
@@ -98,7 +103,10 @@ func add_ability(a:AbilityData,addToPlayer:bool = true) -> Ability:
 	instance._data = a
 	instance._ability_sprite.texture = a._ability_icon
 	instance.set_magnitude(a._magnitude)
-	instance._wheel_placement = a._initial_placement
+	if (pos != -1):
+		instance._wheel_placement = pos
+	else:
+		instance._wheel_placement = a._initial_placement
 	print_rich("[color=CORAL] Adding ability: "+str(instance._ability_name)+" - with ability: "+str(instance))
 	if (addToPlayer):
 		_all_abilities.append(instance)
@@ -189,6 +197,11 @@ func calculate_closest_position_on_wheel(pos:Vector2) -> Vector2:
 func on_stop_drag_ability(ab:Ability):
 	if (!is_instance_valid(_dragged_ability)):
 		return
+	
+	_dragging_ability = false
+	
+	if (ab.is_enemy()):
+		return
 		
 	var new_pos:Vector2 = calculate_closest_position_on_wheel(ab.global_position)
 	
@@ -206,7 +219,6 @@ func on_stop_drag_ability(ab:Ability):
 		else:
 			new_pos = _initial_drag_position
 			
-	_dragging_ability = false
 	SimonTween.start_tween(ab,"global_position",new_pos,0.25)
 	ab.bright_flash()
 	await SimonTween.start_tween(ab,"scale",Vector2(0.2,0.2),0.50,_shake_curve).set_relative(true).tween_finished

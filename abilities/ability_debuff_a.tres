@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=3 format=3 uid="uid://48aw0csokj18"]
+
+[ext_resource type="Texture2D" uid="uid://cvwx7aib332dg" path="res://knife.png" id="1_gkh37"]
+[ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="2_ogyg6"]
+
+[resource]
+script = ExtResource("2_ogyg6")
+_ability_type = 1
+_ability_name = "Demotivation"
+_ability_description = "Do nothing"
+_ability_icon = ExtResource("1_gkh37")
+_magnitude = 0
+_initial_placement = -1.0
+metadata/_custom_type_script = "uid://crb7n5yxpbd5t"
