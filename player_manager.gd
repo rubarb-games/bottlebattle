@@ -1,5 +1,10 @@
 class_name PlayerManager extends Control
 
+enum PlayerStatus { IDLE, DRAGGING, INACTIVE, OTHER }
+var _player_status:PlayerStatus = PlayerStatus.IDLE
+
+static var Main:PlayerManager
+
 @export var _playerHandle:Control
 @export var _playerMarker:Marker2D
 @export var _enemyHandle:Control
@@ -27,14 +32,22 @@ class_name PlayerManager extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	Main = self
+	
+	#Register class
+	G.register_manager.emit(self)
+	
 	G.execute_ability.connect(on_execute_ability)
 	G.adjust_cash.connect(on_adjust_cash)
+	
+	G.dragging_ability.connect(on_dragging)
+	G.stop_dragging_ability.connect(on_stop_dragging)
 	
 	_enemyHandle.position.y += 25
 	_enemyHandle.modulate.a = 0
 	_ability_indicator_handle.modulate.a = 0
-	#_enemy_bottle_handle.position.x += 300
-	#update_health_values()
+
+	G.adjust_cash.emit(0)
 	
 func start_gameplay_round():
 	start_new_encounter()
@@ -47,12 +60,7 @@ func end_encounter():
 	SimonTween.start_tween(_enemyHandle,"position:x",200,0.35).set_relative(true)
 
 func start_new_encounter():
-	var enc:EnemyData
-	if (_all_enemy_encounters.size() < 1):
-		print_rich("[color=RED]ALL ENEMY ENCOUNTERS EXHAUSTED!")
-		enc = _default_enemy_encounter
-	else:
-		enc = _all_enemy_encounters.pop_back()
+	var enc:EnemyData = GameManager.Main.get_encounter_manager().get_encounter_data()
 	
 	_enemyHealth = enc._health
 	_enemy_health_handle.max_value = enc._health
@@ -71,7 +79,6 @@ func is_enemy_alive():
 	return true if _enemyHealth > 0 else false
 	
 func update_health_values():
-	print("CHECKIN!!!")
 	if (_playerHealth < 1):
 		player_die()
 		return false
@@ -167,3 +174,9 @@ func on_adjust_cash(adjustment:int):
 
 func on_execute_ability(ability:Ability, magnitude:int,player_ability:bool):
 	execute_ability(ability,magnitude,player_ability)
+
+func on_dragging(a:Ability):
+	_player_status = PlayerStatus.DRAGGING
+	
+func on_stop_dragging(a:Ability):
+	_player_status = PlayerStatus.IDLE

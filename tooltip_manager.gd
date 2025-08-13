@@ -5,14 +5,23 @@ class_name TooltipManager extends Control
 
 @export var _text_popup_handle:Control
 @export var _text_popup_text_handle:RichTextLabel
+@export var _cash_label:Label
+
+@export var _status_text_label:Label
 
 @export var _text_popup_curve:Curve
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	#Register class
+	G.register_manager.emit(self)
+	
 	G.display_tooltip.connect(on_display_tooltip)
 	G.hide_tooltip.connect(on_hide_tooltip)
 	
+	G.display_status_text.connect(on_display_status_text)
+	
+	G.adjust_cash.connect(money_adjusted)
 	G.popup_text.connect(on_popup_text)
 	_text_popup_handle.modulate.a = 0
 	on_hide_tooltip()
@@ -36,3 +45,13 @@ func on_popup_text(text:String, pos:Vector2):
 	_text_popup_text_handle.text = text
 	SimonTween.start_tween(_text_popup_handle,"modulate:a",1.0,1.25,_text_popup_curve).set_relative(true)
 	SimonTween.start_tween(_text_popup_handle,"position:y",-50.0,0.2).set_relative(true)
+
+func on_display_status_text(text:String):
+	_status_text_label.text = text
+	
+func on_hide_status_text():
+	pass
+
+func money_adjusted(adjustment:int):
+	await get_tree().process_frame
+	_cash_label.text = "Coins: "+str(GameManager.Main._player_manager_handle._playerCash)+"c"

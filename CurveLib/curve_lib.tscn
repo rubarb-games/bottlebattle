@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://c3xjtplk4kl11"]
+
+[ext_resource type="Script" uid="uid://dlrch0nuxdd7o" path="res://CurveLib/CurveLib.gd" id="1_dw51c"]
+[ext_resource type="Curve" uid="uid://bna8s7cq7iep0" path="res://CurveLib/curves/strike_curve.tres" id="2_8jp0b"]
+
+[node name="CurveLib" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 18.0
+offset_top = 313.0
+offset_right = 58.0
+offset_bottom = 353.0
+script = ExtResource("1_dw51c")
+ShakeCurveA = ExtResource("2_8jp0b")

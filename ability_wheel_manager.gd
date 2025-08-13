@@ -29,6 +29,9 @@ var _initial_drag_position:Vector2
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	#Register class
+	G.register_manager.emit(self)
+	
 	G.dragging_ability.connect(on_drag_ability)
 	G.stop_dragging_ability.connect(on_stop_drag_ability)
 	
@@ -237,5 +240,4 @@ func on_stop_drag_ability(ab:Ability):
 		remove_ability(ability_to_replace)
 
 func on_start_encounter(enc:EnemyData):
-	print("HUH??????")
 	add_encounter_abilities(enc)

@@ -11,6 +11,8 @@ signal loot_picked()
 signal start_encounter(encounter:EnemyData)
 
 signal popup_text(text:String, pos:Vector2)
+signal display_status_text(text:String)
+
 
 signal dragging_ability(ab:Ability)
 signal stop_dragging_ability(ab:Ability)
@@ -33,3 +35,5 @@ signal round_gameover_end()
 
 signal player_die()
 signal enemy_die()
+
+signal register_manager(obj:Object)

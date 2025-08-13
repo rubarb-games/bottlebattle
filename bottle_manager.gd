@@ -71,17 +71,16 @@ var _bottle_angular_velocity_treshold:float = 2
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	#G.round_gameplay_start.connect(on_game)
+	#Register class
+	G.register_manager.emit(self)
 	
 	reset_values()
-	
-	#change_state(BottleStatus.IDLE)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if (_gm_handle._player_status != GameManager.PlayerStatus.IDLE \
-	or _gm_handle._round_status != GameManager.RoundStatus.GAMEPLAY):
+	if (GameManager.Main.get_player()._player_status != PlayerManager.PlayerStatus.IDLE \
+	or GameManager.Main._round_status != GameManager.RoundStatus.GAMEPLAY):
 		return
 	
 	match _status:
@@ -364,8 +363,8 @@ func eval_enemy():
 		if (d_p > top_direction_match):
 			top_ability = a
 			top_direction_match = d_p
-
-	if (top_ability):	
+			
+	if (top_ability):
 		var goal_dir = _enemy_bottle_center.global_position.direction_to(top_ability.global_position)
 		#_enemy_button_handle.rotation = deg_to_rad(fmod(rad_to_deg(_enemy_button_handle.rotation),360.0))
 		

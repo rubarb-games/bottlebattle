@@ -24,6 +24,9 @@ var _pressed_chest_button:bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	#Register class
+	G.register_manager.emit(self)
+	
 	G.round_loot_start.connect(on_loot_start)
 	G.round_loot_end.connect(on_loot_end)
 	
