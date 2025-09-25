@@ -5,6 +5,8 @@
 
 [resource]
 script = ExtResource("2_ysofw")
+rarity = 1
+_ability_target = 1
 _ability_name = "Heavy blow"
 _ability_description = "Deal 9 damage. Wow!!"
 _ability_icon = ExtResource("1_berf2")

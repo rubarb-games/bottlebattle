@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BuffData" load_steps=2 format=3 uid="uid://cjcpau4x6vuf2"]
+
+[ext_resource type="Script" uid="uid://djl1mugibkmpl" path="res://buff_data.gd" id="1_6pgfn"]
+
+[resource]
+script = ExtResource("1_6pgfn")
+name = "Anger"
+description = "Raises damage of attacks by 2"
+duration = 2
+magnitude = 10.0
+metadata/_custom_type_script = "uid://djl1mugibkmpl"

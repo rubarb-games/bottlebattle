@@ -1,0 +1,115 @@
+[gd_scene load_steps=8 format=3 uid="uid://bdjrugsoox4w3"]
+
+[ext_resource type="Script" uid="uid://ccecspecr6wnb" path="res://bottle_loot.gd" id="1_mgu5y"]
+[ext_resource type="Texture2D" uid="uid://bg7lyvo8qpl8d" path="res://pepsi_hell_yeah.png" id="2_mgu5y"]
+[ext_resource type="Texture2D" uid="uid://xqs47jqm2t0r" path="res://Circle.png" id="3_gk2h7"]
+
+[sub_resource type="Curve" id="Curve_mgu5y"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_wvys6"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_gk2h7"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_rve4x"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="bottle" type="ColorRect" node_paths=PackedStringArray("_bottle_button_handle", "_bright_flash", "_green_flash", "_adjacency_bonus_indicator", "_bottle_sprite")]
+z_index = 4
+anchors_preset = -1
+offset_left = 544.0
+offset_top = 141.0
+offset_right = 544.0
+offset_bottom = 141.0
+script = ExtResource("1_mgu5y")
+_bottle_button_handle = NodePath("Control/Button")
+_bright_flash = NodePath("Control/brightFlashRect")
+_green_flash = NodePath("Control/Green_flash")
+_bright_flash_curve = SubResource("Curve_mgu5y")
+_green_flash_curve = SubResource("Curve_wvys6")
+_shake_curve = SubResource("Curve_gk2h7")
+_spawn_curve = SubResource("Curve_rve4x")
+_adjacency_bonus_indicator = NodePath("Control/AdjacencyRangeIndicator")
+_bottle_sprite = NodePath("Control/Ability_slot/bottle_texture")
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 0
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+
+[node name="Ability_slot" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 52.0
+offset_bottom = 52.0
+pivot_offset = Vector2(32, 32)
+color = Color(0.41568628, 0.7372549, 0.70980394, 0)
+
+[node name="bottle_texture" type="TextureRect" parent="Control/Ability_slot"]
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+scale = Vector2(0.922, 0.922)
+texture = ExtResource("2_mgu5y")
+expand_mode = 1
+
+[node name="Button" type="Button" parent="Control"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="brightFlashRect" type="ColorRect" parent="Control"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="Green_flash" type="ColorRect" parent="Control"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 52.0
+offset_bottom = 52.0
+pivot_offset = Vector2(32, 32)
+mouse_filter = 2
+color = Color(0.36862746, 0.8901961, 0, 0.62352943)
+
+[node name="AdjacencyRangeIndicator" type="TextureRect" parent="Control"]
+self_modulate = Color(1, 1, 1, 0.172549)
+z_index = -2
+layout_mode = 0
+offset_right = 60.0
+offset_bottom = 60.0
+mouse_filter = 2
+texture = ExtResource("3_gk2h7")
+expand_mode = 2
+
+[node name="DamageNumbers" type="RichTextLabel" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(20, 20)
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "25"
+horizontal_alignment = 1
+vertical_alignment = 1

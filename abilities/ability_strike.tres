@@ -5,6 +5,7 @@
 
 [resource]
 script = ExtResource("1_xljkf")
+_ability_target = 1
 _ability_name = "Strike"
 _ability_description = "Deal 5 damage"
 _ability_icon = ExtResource("1_t3psd")

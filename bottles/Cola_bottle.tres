@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Bottle" load_steps=3 format=3 uid="uid://w5volrg0727r"]
+
+[ext_resource type="Texture2D" uid="uid://d2wcu3k4oas84" path="res://cola.png" id="1_eom2p"]
+[ext_resource type="Script" uid="uid://itvjxvyfjv7n" path="res://bottle_data.gd" id="2_myn6x"]
+
+[resource]
+script = ExtResource("2_myn6x")
+name = "Cola"
+description = "Hm, extremely dubious drink"
+arc_range = 90.0
+crit_range = 15.0
+bottle_texture = ExtResource("1_eom2p")
+metadata/_custom_type_script = "uid://itvjxvyfjv7n"

@@ -6,6 +6,9 @@ class_name EncounterManager extends Control
 @export var _all_enemy_encounters:Array[EnemyData]
 @export var _default_enemy_encounter:EnemyData
 
+#Debug
+@export var _win_encounter_button:Button
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#Register class
@@ -13,6 +16,8 @@ func _ready():
 	
 	G.enemy_die.connect(on_enemy_die)
 	G.loot_picked.connect(on_loot_picked)
+	
+	_win_encounter_button.pressed.connect(on_enemy_die)
 
 func get_next_encounter():
 	var enc:GameEncounters = _encounter_list.pop_back()

@@ -35,6 +35,9 @@ func _ready():
 	G.dragging_ability.connect(on_drag_ability)
 	G.stop_dragging_ability.connect(on_stop_drag_ability)
 	
+	G.round_loot_start.connect(on_loot_start)
+	G.round_loot_end.connect(on_loot_end)
+	
 	G.add_ability.connect(on_add_ability)
 	G.start_encounter.connect(on_start_encounter)
 	
@@ -197,6 +200,10 @@ func on_drag_ability(ab:Ability):
 	if (ab.is_enemy()):
 		return
 		
+	if (_gm_handle.is_loot_phase()):
+		highlight_abilities()
+		green_flash_abilities()
+		
 	_dragged_ability = ab
 	_dragging_ability = true
 	_initial_drag_position = ab.global_position
@@ -217,6 +224,9 @@ func on_stop_drag_ability(ab:Ability):
 	if (ab.is_enemy()):
 		return
 		
+	if (_gm_handle.is_loot_phase()):
+		highlight_abilities(true)
+		
 	var new_pos:Vector2 = calculate_closest_position_on_wheel(ab.global_position)
 	
 	var ability_to_replace:Ability = null
@@ -230,6 +240,7 @@ func on_stop_drag_ability(ab:Ability):
 				
 		if (is_instance_valid(ability_to_replace)):
 			G.add_ability.emit(ab,true)
+			ab.green_flash()
 		else:
 			new_pos = _initial_drag_position
 			
@@ -238,6 +249,23 @@ func on_stop_drag_ability(ab:Ability):
 	await SimonTween.start_tween(ab,"scale",Vector2(0.2,0.2),0.50,_shake_curve).set_relative(true).tween_finished
 	if (is_instance_valid(ability_to_replace)):
 		remove_ability(ability_to_replace)
+
+func highlight_abilities(reverse:bool = false):
+	for a in _all_abilities:
+		if (reverse):
+			a.set_dehighlight()
+		else:
+			a.set_highlight()
+
+func green_flash_abilities():
+	for a in _all_abilities:
+			a.green_flash()
+
+func on_loot_start():
+	highlight_abilities(true)
+	
+func on_loot_end():
+	highlight_abilities(false)
 
 func on_start_encounter(enc:EnemyData):
 	add_encounter_abilities(enc)

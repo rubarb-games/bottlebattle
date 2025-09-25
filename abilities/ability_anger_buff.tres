@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=4 format=3 uid="uid://48aw0csokj18"]
+
+[ext_resource type="Texture2D" uid="uid://cvwx7aib332dg" path="res://knife.png" id="1_xg2q7"]
+[ext_resource type="Resource" uid="uid://cjcpau4x6vuf2" path="res://Buffs/anger_buff.tres" id="2_dueg2"]
+[ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="3_22xwr"]
+
+[resource]
+script = ExtResource("3_22xwr")
+_ability_type = 1
+_ability_name = "ANGER!"
+_ability_description = "You just get so so angry!!!!"
+_ability_icon = ExtResource("1_xg2q7")
+_magnitude = 5
+_initial_placement = -1.0
+_buff_data = ExtResource("2_dueg2")
+metadata/_custom_type_script = "uid://crb7n5yxpbd5t"

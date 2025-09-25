@@ -9,7 +9,7 @@ static var AbilityWheel:AbilityWheelManager
 
 var _state_delay:float = 1.0
 
-enum RoundStatus { GAMEPLAY, IN_PROGRESS, LOOT, OTHER, GAMEOVER, SHOP }
+enum RoundStatus { GAMEPLAY, IN_PROGRESS, LOOT, INTRO, OTHER, GAMEOVER, SHOP }
 var _round_status:RoundStatus = RoundStatus.GAMEPLAY
 
 @export var _bottle_manager_handle:BottleManager
@@ -37,10 +37,16 @@ func _ready():
 	
 	G.register_manager.connect(on_register_manager)
 	
+	G.round_intro_start.connect(on_round_intro_start)
+	G.round_intro_end.connect(on_round_intro_end)
+	
+	G.intro_loot_picked.connect(on_intro_loot_picked)
+	
 	initialize()
 	
 func initialize():
-	change_round_status(RoundStatus.GAMEPLAY)
+	change_round_status(RoundStatus.INTRO)
+	#change_round_status(RoundStatus.GAMEPLAY)
 
 func start_gameplay_round():
 	change_round_status(RoundStatus.GAMEPLAY)
@@ -54,6 +60,8 @@ func start_shop_round():
 func change_round_status(rs:RoundStatus):
 	#Exiting previous state
 	match _round_status:
+		RoundStatus.INTRO:
+			G.round_intro_end.emit()
 		RoundStatus.GAMEPLAY:
 			G.round_gameplay_end.emit()
 		RoundStatus.LOOT:
@@ -69,6 +77,9 @@ func change_round_status(rs:RoundStatus):
 	
 	#Entering new state
 	match rs:
+		RoundStatus.INTRO:
+			_round_status = rs
+			G.round_intro_start.emit()
 		RoundStatus.GAMEPLAY:
 			_round_status = rs
 			G.round_gameplay_start.emit()
@@ -89,6 +100,9 @@ func is_loot_phase():
 	
 func is_gameplay_phase():
 	return true if _round_status == RoundStatus.GAMEPLAY else false
+
+func is_intro_phase():
+	return true if _round_status == RoundStatus.INTRO else false
 
 func get_bottle():
 	return _bottle_manager_handle
@@ -137,6 +151,12 @@ func on_round_gameover_start():
 func on_round_gameover_end():
 	pass
 
+func on_round_intro_start():
+	pass
+	
+func on_round_intro_end():
+	pass
+
 func on_player_die():
 	change_round_status(RoundStatus.GAMEOVER)
 	
@@ -145,6 +165,9 @@ func on_enemy_die():
 
 func on_loot_picked():
 	pass
+
+func on_intro_loot_picked():
+	change_round_status(RoundStatus.GAMEPLAY)
 
 func on_register_manager(obj:Object):
 	if obj is PlayerManager:

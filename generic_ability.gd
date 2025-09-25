@@ -13,12 +13,16 @@ var _initial_magnitude:int = 0
 
 var _initial_placement:float = -1
 
+var bottle_distance:float = 0.0
+
 @export var _ability_name:String
 @export var _ability_description:String
 
 @export var _ability_button_handle:Button
 @export var _bright_flash:ColorRect
+@export var _green_flash:ColorRect
 @export var _bright_flash_curve:Curve
+@export var _green_flash_curve:Curve
 @export var _shake_curve:Curve
 @export var _spawn_curve:Curve
 
@@ -26,6 +30,10 @@ var _initial_placement:float = -1
 
 @export var _damage_numbers_handle:RichTextLabel
 @export var _ability_sprite:Sprite2D
+@export var _ability_slot_handle:ColorRect
+
+@export var _ability_player_color:Color
+@export var _ability_enemy_color:Color
 
 var _data:AbilityData
 
@@ -67,15 +75,25 @@ func destroy():
 
 func set_normal():
 	_status = AbilityStatus.IDLE
+	_ability_slot_handle.color = _ability_player_color
 	
 func set_on_wheel():
 	_status = AbilityStatus.ON_WHEEL
+	_ability_slot_handle.color.a = 1.0
 
 func set_loot():
 	_status = AbilityStatus.LOOT
+	_ability_slot_handle.color.a = 0.0
 
 func set_enemy():
 	_status = AbilityStatus.ENEMY
+	_ability_slot_handle.color = _ability_enemy_color
+
+func set_dehighlight():
+	SimonTween.start_tween(_ability_slot_handle,"modulate",Color(0.,0.2,0.2,1),0.2,null).set_end_snap(true)
+
+func set_highlight():
+	SimonTween.start_tween(_ability_slot_handle,"modulate",Color(1.0,1.0,1.0,1),0.2,null).set_end_snap(true)
 
 func is_loot():
 	return true if _status == AbilityStatus.LOOT else false
@@ -89,6 +107,12 @@ func is_enemy():
 func bright_flash():
 	SimonTween.start_tween(_bright_flash,"modulate:a",1.0,0.7,_bright_flash_curve).set_relative(true).set_start_snap(true)
 
+func green_flash():
+	_green_flash.scale = Vector2(0.5,0.5)
+	SimonTween.start_tween(_green_flash,"modulate:a",1.0,1.0,_green_flash_curve).set_relative(true).set_start_snap(true)
+	await SimonTween.start_tween(_green_flash,"scale",Vector2(1.0,1.0),1.0,_green_flash_curve).set_relative(true).set_end_snap(true).tween_finished
+	_green_flash.scale = Vector2(1.0,1.0)
+	
 func get_magnitude():
 	return _magnitude
 
@@ -101,11 +125,15 @@ func set_magnitude(mag:int):
 func reset_magnitude():
 	_magnitude = _initial_magnitude
 
-func damage_numbers_popup():
-	_damage_numbers_handle.text = str(_magnitude)
+func damage_numbers_popup(numbers:float, use_mag:bool = false):
+	if use_mag:
+		numbers = _magnitude
+	
+	_damage_numbers_handle.text = str(numbers)
 	SimonTween.start_tween(_damage_numbers_handle,"modulate:a",1.0,0.25)
 	await SimonTween.start_tween(_damage_numbers_handle,"position:y",-_size,0.4).tween_finished
-	return
+	
+	return true
 	
 func damage_numbers_shake():
 	await SimonTween.start_tween(_damage_numbers_handle,"scale",Vector2(0.5,0.5),0.25,_shake_curve).set_relative(true).tween_finished
@@ -132,6 +160,12 @@ func hide_adjacency_radius():
 func on_mouse_entered():
 	G.display_tooltip.emit(_ability_name+"\n"+_ability_description)
 	display_adjacency_radius()
+
+func set_distance_to_hit(distance:float):
+	bottle_distance = distance
+	
+func get_distance_to_hit() -> float: 
+	return bottle_distance
 
 func on_mouse_exited():
 	G.hide_tooltip.emit()

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=3 format=3 uid="uid://yp8u2n4j5f48"]
+
+[ext_resource type="Texture2D" uid="uid://cvwx7aib332dg" path="res://knife.png" id="1_1i5bs"]
+[ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="2_73xrf"]
+
+[resource]
+script = ExtResource("2_73xrf")
+_ability_type = 4
+_ability_name = "Basic Shield"
+_ability_description = "Add 5 defense"
+_ability_icon = ExtResource("1_1i5bs")
+_magnitude = 5
+_initial_placement = -1.0
+metadata/_custom_type_script = "uid://crb7n5yxpbd5t"

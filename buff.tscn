@@ -1,0 +1,43 @@
+[gd_scene load_steps=4 format=3 uid="uid://cy5y0ranyurxh"]
+
+[ext_resource type="Script" uid="uid://dg0p6boyqanue" path="res://generic_buff.gd" id="1_vhsdr"]
+[ext_resource type="Texture2D" uid="uid://bvxjdq868audl" path="res://powerKife.png" id="2_wlc5e"]
+
+[sub_resource type="Curve" id="Curve_vhsdr"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.099371076, 0.982464), 0.0, 0.0, 0, 0, Vector2(0.16100629, -0.87634885), 0.0, 0.0, 0, 0, Vector2(0.34339622, 0.23426259), 0.0, 0.0, 0, 0, Vector2(0.51194966, -0.38534176), 0.0, 0.0, 0, 0, Vector2(0.7207547, 0.06474817), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 7
+
+[node name="Buff_rect" type="ColorRect" node_paths=PackedStringArray("_visual_handle", "_duration_label")]
+anchors_preset = -1
+offset_right = 16.0
+offset_bottom = 16.0
+color = Color(0.23028126, 0.45454073, 0.21327305, 1)
+script = ExtResource("1_vhsdr")
+_shake_curve = SubResource("Curve_vhsdr")
+_visual_handle = NodePath("ColorRect")
+_duration_label = NodePath("ColorRect/Duration_left")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 16.0
+offset_bottom = 16.0
+pivot_offset = Vector2(8, 8)
+
+[node name="Sprite2D" type="Sprite2D" parent="ColorRect"]
+position = Vector2(8, 7.999998)
+scale = Vector2(0.20203798, 0.20203798)
+texture = ExtResource("2_wlc5e")
+
+[node name="Duration_left" type="RichTextLabel" parent="ColorRect"]
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 1
+anchors_preset = -1
+offset_top = 16.0
+offset_right = 16.0
+offset_bottom = 32.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 8
+text = "123"
+scroll_active = false
+horizontal_alignment = 1

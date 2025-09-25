@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="1_qfuxq"]
 [ext_resource type="Resource" uid="uid://d3o8qdqkp8u7" path="res://abilities/ability_strike.tres" id="2_mlpbl"]
 [ext_resource type="Resource" uid="uid://d4cfx8gaml60e" path="res://abilities/ability_heavy_strike.tres" id="3_t1nlr"]
-[ext_resource type="Resource" uid="uid://48aw0csokj18" path="res://abilities/ability_debuff_a.tres" id="4_mlpbl"]
+[ext_resource type="Resource" uid="uid://48aw0csokj18" path="res://abilities/ability_anger_buff.tres" id="4_mlpbl"]
 
 [resource]
 script = ExtResource("1_mudn5")

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Bottle" load_steps=3 format=3 uid="uid://ddflvalnqneyr"]
+
+[ext_resource type="Texture2D" uid="uid://bg7lyvo8qpl8d" path="res://pepsi_hell_yeah.png" id="1_wmj8u"]
+[ext_resource type="Script" uid="uid://itvjxvyfjv7n" path="res://bottle_data.gd" id="2_1k7nl"]
+
+[resource]
+script = ExtResource("2_1k7nl")
+name = "Pepsi"
+description = "Wow, how fresh"
+arc_range = 90.0
+crit_range = 15.0
+bottle_texture = ExtResource("1_wmj8u")
+metadata/_custom_type_script = "uid://itvjxvyfjv7n"
