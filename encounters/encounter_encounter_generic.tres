@@ -1,8 +1,10 @@
-[gd_resource type="Resource" script_class="GameEncounters" load_steps=2 format=3 uid="uid://bjtm06b12yxx7"]
+[gd_resource type="Resource" script_class="GameEncounters" load_steps=3 format=3 uid="uid://bjtm06b12yxx7"]
 
 [ext_resource type="Script" uid="uid://boytcpiqoob6h" path="res://game_encounters.gd" id="1_qlcb7"]
+[ext_resource type="Resource" uid="uid://dlxjkgvyys8g2" path="res://enemies/enemy_troll.tres" id="1_t1pou"]
 
 [resource]
 script = ExtResource("1_qlcb7")
-_type = 0
+_name = "Goblinoid fight!"
+_enemy = ExtResource("1_t1pou")
 metadata/_custom_type_script = "uid://boytcpiqoob6h"

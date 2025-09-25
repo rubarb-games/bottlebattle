@@ -2,6 +2,9 @@ extends Node
 
 var ability_size = 40
 
+var anim_speed_fast = 0.3
+var anim_speed_slow = 1.0
+
 signal display_tooltip(text:String)
 signal hide_tooltip()
 
@@ -13,6 +16,8 @@ signal start_encounter(encounter:EnemyData)
 
 signal popup_text(text:String, pos:Vector2)
 signal display_status_text(text:String)
+
+signal popup_round_timer_text(text:String)
 
 signal dragging_ability(ab:Ability)
 signal stop_dragging_ability(ab:Ability)
@@ -29,6 +34,12 @@ signal buff_elapsed(b:Buff)
 signal next_turn_started()
 
 signal adjust_cash(cash_adjustment:int)
+
+signal flash_bottle()
+signal flash_bottle_green()
+
+signal round_new_start()
+signal round_new_end()
 
 signal round_intro_end()
 signal round_intro_start()

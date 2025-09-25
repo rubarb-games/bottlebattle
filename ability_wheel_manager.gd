@@ -35,6 +35,9 @@ func _ready():
 	G.dragging_ability.connect(on_drag_ability)
 	G.stop_dragging_ability.connect(on_stop_drag_ability)
 	
+	G.round_intro_start.connect(on_loot_start)
+	G.round_intro_end.connect(on_loot_end)
+	
 	G.round_loot_start.connect(on_loot_start)
 	G.round_loot_end.connect(on_loot_end)
 	
@@ -114,6 +117,7 @@ func add_ability(a:AbilityData,addToPlayer:bool = true, pos:float = -1) -> Abili
 	instance._ability_description = a._ability_description
 	instance._data = a
 	instance._ability_sprite.texture = a._ability_icon
+	instance._ability_name_handle.text = a._ability_name
 	instance.set_magnitude(a._magnitude)
 	if (pos != -1):
 		instance._wheel_placement = pos
@@ -179,7 +183,6 @@ func _process(delta):
 			goal_position = get_global_mouse_position()
 	
 		_dragged_ability.global_position = lerp(_dragged_ability.global_position, goal_position, delta * 20)
-		#_dragged_ability.global_position -= _dragged_ability.size / 2
 		
 
 func on_add_ability(ab:Ability, fromLoot:bool):
@@ -200,7 +203,7 @@ func on_drag_ability(ab:Ability):
 	if (ab.is_enemy()):
 		return
 		
-	if (_gm_handle.is_loot_phase()):
+	if (_gm_handle.is_loot_phase() or _gm_handle.is_intro_phase()):
 		highlight_abilities()
 		green_flash_abilities()
 		
@@ -224,7 +227,7 @@ func on_stop_drag_ability(ab:Ability):
 	if (ab.is_enemy()):
 		return
 		
-	if (_gm_handle.is_loot_phase()):
+	if (_gm_handle.is_loot_phase() or _gm_handle.is_intro_phase()):
 		highlight_abilities(true)
 		
 	var new_pos:Vector2 = calculate_closest_position_on_wheel(ab.global_position)

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=6 format=3 uid="uid://rc6jtkd2in2u"]
+
+[ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="1_d5rmf"]
+[ext_resource type="Resource" uid="uid://dcfho0l7uf5hs" path="res://abilities/ability_punch.tres" id="2_d5rmf"]
+[ext_resource type="Resource" uid="uid://ddflvalnqneyr" path="res://bottles/Pepsi_bottle.tres" id="3_t2qhs"]
+[ext_resource type="Texture2D" uid="uid://bv6x64m5w43tk" path="res://art/characters/Untitled-8daddy.png" id="4_pfyp1"]
+[ext_resource type="Script" uid="uid://ktd83qrij437" path="res://enemy_data.gd" id="5_pscay"]
+
+[resource]
+script = ExtResource("5_pscay")
+_name = "A guy"
+_description = "Hello"
+_health = 14
+_portrait = ExtResource("4_pfyp1")
+_enemy_abilities = Array[ExtResource("1_d5rmf")]([ExtResource("2_d5rmf"), ExtResource("2_d5rmf")])
+_enemy_bottle = ExtResource("3_t2qhs")
+metadata/_custom_type_script = "uid://ktd83qrij437"

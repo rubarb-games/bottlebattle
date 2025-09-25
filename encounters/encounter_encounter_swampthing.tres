@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GameEncounters" load_steps=3 format=3 uid="uid://6sgyjskfukf0"]
+
+[ext_resource type="Resource" uid="uid://dtnjmh18730cb" path="res://enemies/enemy_swamp_thing.tres" id="1_succt"]
+[ext_resource type="Script" uid="uid://boytcpiqoob6h" path="res://game_encounters.gd" id="2_lyrv6"]
+
+[resource]
+script = ExtResource("2_lyrv6")
+_name = "Swamp thing fight!"
+_enemy = ExtResource("1_succt")
+metadata/_custom_type_script = "uid://boytcpiqoob6h"

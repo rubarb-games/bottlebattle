@@ -29,6 +29,7 @@ var bottle_distance:float = 0.0
 @export var _adjacency_bonus_indicator:TextureRect
 
 @export var _damage_numbers_handle:RichTextLabel
+@export var _ability_name_handle:RichTextLabel
 @export var _ability_sprite:Sprite2D
 @export var _ability_slot_handle:ColorRect
 
@@ -58,6 +59,8 @@ func initialize():
 	_adjacency_bonus_indicator.modulate.a = 0
 	_damage_numbers_handle.modulate.a = 0
 	_initial_magnitude = _magnitude
+	
+	_ability_name_handle.modulate.a = 0.0
 	
 	self.scale = Vector2.ZERO
 	SimonTween.start_tween(self,"scale",Vector2(1,1),0.5+randf_range(0.0,0.4),_spawn_curve).set_relative(true)
@@ -148,6 +151,17 @@ func damage_numbers_go_down():
 	SimonTween.start_tween(_damage_numbers_handle,"modulate:a",0.0,0.25)
 	await SimonTween.start_tween(_damage_numbers_handle,"position:y",_size,0.4).tween_finished
 	return
+
+func popup_ability_name():
+	_ability_name_handle.text = _ability_name
+	SimonTween.start_tween(_ability_name_handle,"modulate:a",1.0,0.25)
+	await SimonTween.start_tween(_ability_name_handle,"position:y",-_size*1.5,0.4).tween_finished
+	
+	return true
+	
+func lower_ability_name():
+	SimonTween.start_tween(_ability_name_handle,"modulate:a",0.0,0.25)
+	await SimonTween.start_tween(_ability_name_handle,"position:y",_size*1.5,0.4).tween_finished
 
 func display_adjacency_radius():
 	if (is_on_wheel()):

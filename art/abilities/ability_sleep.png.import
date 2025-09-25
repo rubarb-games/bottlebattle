@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cvwx7aib332dg"
-path="res://.godot/imported/knife.png-3a05c28fdac703eeae0d97922cbb4a37.ctex"
+uid="uid://bc6g6gqvp407t"
+path="res://.godot/imported/ability_sleep.png-a86b9dd8d3b0e612b559b6671cd74e6b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://knife.png"
-dest_files=["res://.godot/imported/knife.png-3a05c28fdac703eeae0d97922cbb4a37.ctex"]
+source_file="res://art/abilities/ability_sleep.png"
+dest_files=["res://.godot/imported/ability_sleep.png-a86b9dd8d3b0e612b559b6671cd74e6b.ctex"]
 
 [params]
 

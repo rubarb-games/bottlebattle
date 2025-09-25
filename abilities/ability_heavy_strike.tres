@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="AbilityData" load_steps=3 format=3 uid="uid://d4cfx8gaml60e"]
 
-[ext_resource type="Texture2D" uid="uid://bvxjdq868audl" path="res://powerKife.png" id="1_berf2"]
+[ext_resource type="Texture2D" uid="uid://bvxjdq868audl" path="res://art/abilities/powerKife.png" id="1_berf2"]
 [ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="2_ysofw"]
 
 [resource]
@@ -8,7 +8,7 @@ script = ExtResource("2_ysofw")
 rarity = 1
 _ability_target = 1
 _ability_name = "Heavy blow"
-_ability_description = "Deal 9 damage. Wow!!"
+_ability_description = "Deal 11 damage. Wow!!"
 _ability_icon = ExtResource("1_berf2")
 _magnitude = 9
 _initial_placement = 180.0

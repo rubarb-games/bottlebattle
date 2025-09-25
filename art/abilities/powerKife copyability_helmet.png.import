@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvxjdq868audl"
-path="res://.godot/imported/powerKife.png-9f092d75d6b0898c135129697ac15517.ctex"
+uid="uid://creo7k5bk3x1l"
+path="res://.godot/imported/powerKife copyability_helmet.png-ac58ee95497ff458ee69cdc499143dbe.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://powerKife.png"
-dest_files=["res://.godot/imported/powerKife.png-9f092d75d6b0898c135129697ac15517.ctex"]
+source_file="res://art/abilities/powerKife copyability_helmet.png"
+dest_files=["res://.godot/imported/powerKife copyability_helmet.png-ac58ee95497ff458ee69cdc499143dbe.ctex"]
 
 [params]
 

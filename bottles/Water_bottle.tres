@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Bottle" load_steps=3 format=3 uid="uid://7l0frcr5iaej"]
+
+[ext_resource type="Texture2D" uid="uid://b1rw54u0oeh4o" path="res://art/bottles/water_texture.png" id="1_61q06"]
+[ext_resource type="Script" uid="uid://itvjxvyfjv7n" path="res://bottle_data.gd" id="2_mpc6f"]
+
+[resource]
+script = ExtResource("2_mpc6f")
+name = "Water"
+description = "Wow, how fresh. Narrow range, high crit chance"
+arc_range = 90.0
+crit_range = 60.0
+bottle_texture = ExtResource("1_61q06")
+metadata/_custom_type_script = "uid://itvjxvyfjv7n"

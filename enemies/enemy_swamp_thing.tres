@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=7 format=3 uid="uid://dtnjmh18730cb"]
+
+[ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="1_eqbyt"]
+[ext_resource type="Resource" uid="uid://txl6hhxeob67" path="res://abilities/ability_helmet.tres" id="2_42beu"]
+[ext_resource type="Resource" uid="uid://d3o8qdqkp8u7" path="res://abilities/ability_strike.tres" id="3_akykp"]
+[ext_resource type="Texture2D" uid="uid://c5ncweinsewfc" path="res://art/characters/snako.png" id="4_eqbyt"]
+[ext_resource type="Resource" uid="uid://dtfxinpg6m66l" path="res://bottles/IrnBru_bottle.tres" id="4_p6mv0"]
+[ext_resource type="Script" uid="uid://ktd83qrij437" path="res://enemy_data.gd" id="5_httdy"]
+
+[resource]
+script = ExtResource("5_httdy")
+_name = "Swamp lizard"
+_description = "Ssssssssss"
+_health = 10
+_portrait = ExtResource("4_eqbyt")
+_enemy_abilities = Array[ExtResource("1_eqbyt")]([ExtResource("2_42beu"), ExtResource("3_akykp"), ExtResource("3_akykp"), ExtResource("3_akykp"), ExtResource("3_akykp")])
+_enemy_bottle = ExtResource("4_p6mv0")
+metadata/_custom_type_script = "uid://ktd83qrij437"

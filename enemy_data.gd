@@ -7,3 +7,5 @@ class_name EnemyData extends Resource
 @export var _portrait:Texture
 
 @export var _enemy_abilities:Array[AbilityData]
+
+@export var _enemy_bottle:Bottle

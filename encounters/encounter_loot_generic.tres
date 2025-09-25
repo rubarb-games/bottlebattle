@@ -5,4 +5,5 @@
 [resource]
 script = ExtResource("1_hiub8")
 _type = 1
+_name = "Loot!"
 metadata/_custom_type_script = "uid://boytcpiqoob6h"

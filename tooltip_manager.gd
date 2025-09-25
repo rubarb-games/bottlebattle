@@ -11,6 +11,10 @@ class_name TooltipManager extends Control
 
 @export var _text_popup_curve:Curve
 
+@export var _round_timer_handle:Label
+var _round_timer_initial_position:Vector2
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#Register class
@@ -24,6 +28,11 @@ func _ready():
 	G.adjust_cash.connect(money_adjusted)
 	G.popup_text.connect(on_popup_text)
 	_text_popup_handle.modulate.a = 0
+	
+	G.popup_round_timer_text.connect(on_popup_round_timer)
+	_round_timer_initial_position = _round_timer_handle.global_position
+	_round_timer_handle.text = ""
+	
 	on_hide_tooltip()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -51,6 +60,22 @@ func on_display_status_text(text:String):
 	
 func on_hide_status_text():
 	pass
+
+func on_popup_round_timer(text:String):
+	var slide_distance = 80
+	
+	_round_timer_handle.modulate.a = 0.0
+	_round_timer_handle.global_position = _round_timer_initial_position
+	_round_timer_handle.global_position.x += slide_distance
+	_round_timer_handle.text = text
+	
+	SimonTween.start_tween(_round_timer_handle,"modulate:a",1.0,G.anim_speed_fast,null).set_relative(true)
+	await SimonTween.start_tween(_round_timer_handle,"global_position:x",-slide_distance,G.anim_speed_fast,null).set_relative(true).tween_finished
+	await get_tree().create_timer(G.anim_speed_slow).timeout
+
+	SimonTween.start_tween(_round_timer_handle,"modulate:a",-1.0,G.anim_speed_fast,null).set_relative(true)
+	await SimonTween.start_tween(_round_timer_handle,"global_position:x",-slide_distance,G.anim_speed_fast,null).set_relative(true).tween_finished
+	
 
 func money_adjusted(adjustment:int):
 	await get_tree().process_frame

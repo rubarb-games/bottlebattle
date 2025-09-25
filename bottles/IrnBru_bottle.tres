@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Bottle" load_steps=3 format=3 uid="uid://dtfxinpg6m66l"]
+
+[ext_resource type="Texture2D" uid="uid://dwjqbvfxwonbm" path="res://art/bottles/irnbru_texture.png" id="1_iyvdv"]
+[ext_resource type="Script" uid="uid://itvjxvyfjv7n" path="res://bottle_data.gd" id="2_pyfbi"]
+
+[resource]
+script = ExtResource("2_pyfbi")
+name = "IrnBru"
+description = "Extremely average. Ultra wide range"
+arc_range = 180.0
+crit_multiplier = 1.0
+crit_range = 0.0
+bottle_texture = ExtResource("1_iyvdv")
+metadata/_custom_type_script = "uid://itvjxvyfjv7n"

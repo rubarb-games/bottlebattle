@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GameEncounters" load_steps=2 format=3 uid="uid://rdmea3h4cpco"]
+
+[ext_resource type="Script" uid="uid://boytcpiqoob6h" path="res://game_encounters.gd" id="1_jwkve"]
+
+[resource]
+script = ExtResource("1_jwkve")
+_type = 3
+_name = "Intro"
+metadata/_custom_type_script = "uid://boytcpiqoob6h"

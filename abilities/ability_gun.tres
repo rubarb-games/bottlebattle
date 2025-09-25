@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=3 format=3 uid="uid://bo53qxr37u1ua"]
+
+[ext_resource type="Texture2D" uid="uid://dx5hexbn7p3yf" path="res://art/abilities/ability_gun.png" id="1_mtbpb"]
+[ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="2_so8bw"]
+
+[resource]
+script = ExtResource("2_so8bw")
+rarity = 2
+_ability_target = 1
+_ability_name = "Gun"
+_ability_description = "Deals 15 damage. Hell yeah"
+_ability_icon = ExtResource("1_mtbpb")
+_magnitude = 15
+_initial_placement = -1.0
+metadata/_custom_type_script = "uid://crb7n5yxpbd5t"

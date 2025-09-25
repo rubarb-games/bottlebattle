@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GameEncounters" load_steps=3 format=3 uid="uid://d4hetvrcjmh8m"]
+
+[ext_resource type="Resource" uid="uid://behhkt8umrar8" path="res://enemies/enemy_giant_baby.tres" id="1_tykvh"]
+[ext_resource type="Script" uid="uid://boytcpiqoob6h" path="res://game_encounters.gd" id="2_07v61"]
+
+[resource]
+script = ExtResource("2_07v61")
+_name = "Giant baby fight"
+_enemy = ExtResource("1_tykvh")
+metadata/_custom_type_script = "uid://boytcpiqoob6h"

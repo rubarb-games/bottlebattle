@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bg7lyvo8qpl8d"
-path="res://.godot/imported/pepsi_hell_yeah.png-755e4bb72b82e72d87b44a3cb50ae0f6.ctex"
+uid="uid://bvxjdq868audl"
+path="res://.godot/imported/powerKife.png-fa0cc94f3e5cfd091d4a8f91f866d40e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://pepsi_hell_yeah.png"
-dest_files=["res://.godot/imported/pepsi_hell_yeah.png-755e4bb72b82e72d87b44a3cb50ae0f6.ctex"]
+source_file="res://art/abilities/powerKife.png"
+dest_files=["res://.godot/imported/powerKife.png-fa0cc94f3e5cfd091d4a8f91f866d40e.ctex"]
 
 [params]
 

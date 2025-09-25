@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://bdjrugsoox4w3"]
 
 [ext_resource type="Script" uid="uid://ccecspecr6wnb" path="res://bottle_loot.gd" id="1_mgu5y"]
-[ext_resource type="Texture2D" uid="uid://bg7lyvo8qpl8d" path="res://pepsi_hell_yeah.png" id="2_mgu5y"]
+[ext_resource type="Texture2D" uid="uid://dt6t3pj57uwnl" path="res://art/bottles/pepsi_texture.png" id="2_mgu5y"]
 [ext_resource type="Texture2D" uid="uid://xqs47jqm2t0r" path="res://Circle.png" id="3_gk2h7"]
 
 [sub_resource type="Curve" id="Curve_mgu5y"]

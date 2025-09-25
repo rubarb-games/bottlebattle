@@ -1,17 +1,19 @@
-[gd_resource type="Resource" script_class="EnemyData" load_steps=7 format=3 uid="uid://dlxjkgvyys8g2"]
+[gd_resource type="Resource" script_class="EnemyData" load_steps=8 format=3 uid="uid://dlxjkgvyys8g2"]
 
-[ext_resource type="Texture2D" uid="uid://4q335xxs2p" path="res://icon.svg" id="1_54304"]
 [ext_resource type="Script" uid="uid://ktd83qrij437" path="res://enemy_data.gd" id="1_mudn5"]
 [ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="1_qfuxq"]
 [ext_resource type="Resource" uid="uid://d3o8qdqkp8u7" path="res://abilities/ability_strike.tres" id="2_mlpbl"]
+[ext_resource type="Resource" uid="uid://ddflvalnqneyr" path="res://bottles/Pepsi_bottle.tres" id="3_mlpbl"]
 [ext_resource type="Resource" uid="uid://d4cfx8gaml60e" path="res://abilities/ability_heavy_strike.tres" id="3_t1nlr"]
 [ext_resource type="Resource" uid="uid://48aw0csokj18" path="res://abilities/ability_anger_buff.tres" id="4_mlpbl"]
+[ext_resource type="Texture2D" uid="uid://bxkxvdw4qri2i" path="res://art/characters/goblinoid.png" id="6_t1nlr"]
 
 [resource]
 script = ExtResource("1_mudn5")
-_name = "Spotty teen"
-_description = "WOW, HOW AWKWARD"
-_health = 50
-_portrait = ExtResource("1_54304")
-_enemy_abilities = Array[ExtResource("1_qfuxq")]([ExtResource("2_mlpbl"), ExtResource("3_t1nlr"), ExtResource("4_mlpbl")])
+_name = "Goblinoid"
+_description = "Ayyy, it me, the goblin"
+_health = 20
+_portrait = ExtResource("6_t1nlr")
+_enemy_abilities = Array[ExtResource("1_qfuxq")]([ExtResource("3_t1nlr"), ExtResource("2_mlpbl"), ExtResource("4_mlpbl")])
+_enemy_bottle = ExtResource("3_mlpbl")
 metadata/_custom_type_script = "uid://ktd83qrij437"

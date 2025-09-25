@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=3 format=3 uid="uid://dbe68fp1mehrw"]
+
+[ext_resource type="Texture2D" uid="uid://cmlw7a1g1pqqn" path="res://art/abilities/ability_bite.png" id="1_ry0ve"]
+[ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="2_mjqyo"]
+
+[resource]
+script = ExtResource("2_mjqyo")
+rarity = 1
+_ability_target = 1
+_ability_name = "Bite"
+_ability_description = "Deals 10 damage! Yikes!"
+_ability_icon = ExtResource("1_ry0ve")
+_magnitude = 10
+_initial_placement = -1.0
+metadata/_custom_type_script = "uid://crb7n5yxpbd5t"

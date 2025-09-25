@@ -60,6 +60,7 @@ func _ready() -> void:
 	_loot_skip_button.pressed.connect(on_pressed_skip_button)
 	_loot_chest_button.pressed.connect(on_pressed_chest_button)
 	
+	_intro_ui_handle.visible = false
 	_loot_window.visible = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -201,6 +202,7 @@ func on_add_bottle(b:BottleLoot):
 	loot_picked()
 
 func on_intro_start():
+	_intro_ui_handle.visible = true
 	_loot_picked_amount = 0
 	_loot_picked_maximum = 1
 	_intro_ui_handle.modulate.a  = 1.0

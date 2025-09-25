@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=3 format=3 uid="uid://txl6hhxeob67"]
+
+[ext_resource type="Texture2D" uid="uid://creo7k5bk3x1l" path="res://art/abilities/powerKife copyability_helmet.png" id="1_0q4fx"]
+[ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="2_tutuj"]
+
+[resource]
+script = ExtResource("2_tutuj")
+_ability_type = 4
+_ability_name = "Basic Shield"
+_ability_description = "Add 8 defense"
+_ability_icon = ExtResource("1_0q4fx")
+_magnitude = 8
+_initial_placement = -1.0
+metadata/_custom_type_script = "uid://crb7n5yxpbd5t"

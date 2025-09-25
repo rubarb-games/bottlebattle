@@ -6,6 +6,8 @@ static var Player:PlayerManager
 static var Bottle:BottleManager
 static var Loot:LootManager
 static var AbilityWheel:AbilityWheelManager
+static var Encounter:EncounterManager
+static var MapManager:EncounterMapManager
 
 var _state_delay:float = 1.0
 
@@ -18,6 +20,12 @@ var _round_status:RoundStatus = RoundStatus.GAMEPLAY
 @export var _ability_wheel_manager_handle:AbilityWheelManager
 @export var _loot_manager_handle:LootManager
 @export var _encounter_manager_handle:EncounterManager
+
+@export var _start_game_menu:Control
+@export var _start_game_button:Button
+
+@export var _game_over_menu:Control
+@export var _game_over_button:Button
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -40,13 +48,17 @@ func _ready():
 	G.round_intro_start.connect(on_round_intro_start)
 	G.round_intro_end.connect(on_round_intro_end)
 	
-	G.intro_loot_picked.connect(on_intro_loot_picked)
+	G.player_die.connect(on_player_die)
 	
-	initialize()
+	_start_game_button.pressed.connect(on_start_game)
+	_game_over_button.pressed.connect(on_start_game)
+	#initialize()
 	
 func initialize():
+	_encounter_manager_handle.get_next_encounter()
+
+func start_intro_round():
 	change_round_status(RoundStatus.INTRO)
-	#change_round_status(RoundStatus.GAMEPLAY)
 
 func start_gameplay_round():
 	change_round_status(RoundStatus.GAMEPLAY)
@@ -74,7 +86,6 @@ func change_round_status(rs:RoundStatus):
 			G.round_gameover_end.emit()
 	
 	await get_tree().create_timer(_state_delay).timeout
-	
 	#Entering new state
 	match rs:
 		RoundStatus.INTRO:
@@ -93,6 +104,7 @@ func change_round_status(rs:RoundStatus):
 			G.round_other_start.emit()
 		RoundStatus.GAMEOVER:
 			_round_status = rs
+			_game_over_menu.visible = true
 			G.round_gameover_start.emit()
 
 func is_loot_phase():
@@ -144,7 +156,7 @@ func on_round_other_end():
 	pass
 
 func on_round_gameover_start():
-	change_round_status(RoundStatus.GAMEOVER)
+	#change_round_status(RoundStatus.GAMEOVER)
 	
 	G.display_status_text.emit("Game over!")
 	
@@ -167,7 +179,11 @@ func on_loot_picked():
 	pass
 
 func on_intro_loot_picked():
-	change_round_status(RoundStatus.GAMEPLAY)
+	pass
+
+func on_start_game():
+	_start_game_menu.visible = false
+	initialize()
 
 func on_register_manager(obj:Object):
 	if obj is PlayerManager:
@@ -178,3 +194,7 @@ func on_register_manager(obj:Object):
 		Loot = obj
 	if obj is AbilityWheelManager:
 		AbilityWheel = obj
+	if obj is EncounterMapManager:
+		MapManager = obj
+	if obj is EncounterManager:
+		Encounter = obj

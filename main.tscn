@@ -1,17 +1,22 @@
-[gd_scene load_steps=41 format=3 uid="uid://cqow47bch5ocs"]
+[gd_scene load_steps=62 format=3 uid="uid://cqow47bch5ocs"]
 
 [ext_resource type="Texture2D" uid="uid://xqs47jqm2t0r" path="res://Circle.png" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://q6u8j6egr3nq" path="res://game_manager.gd" id="1_ig7tw"]
-[ext_resource type="Texture2D" uid="uid://bg7lyvo8qpl8d" path="res://pepsi_hell_yeah.png" id="2_1bvp3"]
-[ext_resource type="Texture2D" uid="uid://d2wcu3k4oas84" path="res://cola.png" id="2_2cqfq"]
+[ext_resource type="Texture2D" uid="uid://k5sd0twgkoi5" path="res://art/bottles/cola_texture.png" id="2_come4"]
 [ext_resource type="PackedScene" uid="uid://clxpvqr5pbke6" path="res://ability.tscn" id="3_272bh"]
 [ext_resource type="Script" uid="uid://dtwaylbirlmuk" path="res://bottle_manager.gd" id="3_h2yge"]
 [ext_resource type="Shader" uid="uid://cwmbrtnjj4kqf" path="res://arc_preview_shader.gdshader" id="3_qsp4k"]
+[ext_resource type="Texture2D" uid="uid://dt6t3pj57uwnl" path="res://art/bottles/pepsi_texture.png" id="4_h8e4i"]
 [ext_resource type="PackedScene" uid="uid://cy5y0ranyurxh" path="res://buff.tscn" id="5_4k2k6"]
+[ext_resource type="Texture2D" uid="uid://4q335xxs2p" path="res://icon.svg" id="5_b1qrp"]
 [ext_resource type="Script" uid="uid://boytcpiqoob6h" path="res://game_encounters.gd" id="5_cegan"]
+[ext_resource type="Texture2D" uid="uid://bv6x64m5w43tk" path="res://art/characters/Untitled-8daddy.png" id="5_come4"]
 [ext_resource type="Script" uid="uid://5dl0gm2i3tr7" path="res://ability_wheel_manager.gd" id="5_lquwl"]
+[ext_resource type="Texture2D" uid="uid://b8pcev6db25ey" path="res://art/abilities/ability_shield.png" id="6_6iyjs"]
 [ext_resource type="Script" uid="uid://uhclxxsvheyj" path="res://tooltip_manager.gd" id="6_7mycd"]
 [ext_resource type="Resource" uid="uid://bjtm06b12yxx7" path="res://encounters/encounter_encounter_generic.tres" id="6_82xsv"]
+[ext_resource type="Texture2D" uid="uid://b7cljxs2aeky7" path="res://art/tutorial_02.png" id="7_4lmeg"]
+[ext_resource type="Texture2D" uid="uid://ynm4abefonmd" path="res://art/abilities/ability_heal.png" id="7_4w656"]
 [ext_resource type="Resource" uid="uid://cedx2e6jd2f1u" path="res://encounters/encounter_loot_generic.tres" id="7_getpj"]
 [ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="7_kek77"]
 [ext_resource type="Resource" uid="uid://ddflvalnqneyr" path="res://bottles/Pepsi_bottle.tres" id="7_kq58d"]
@@ -22,7 +27,6 @@
 [ext_resource type="Curve" uid="uid://dbq1v62fm0m00" path="res://CurveLib/curves/speed_buildup_curve.tres" id="10_a6jrf"]
 [ext_resource type="Curve" uid="uid://devqpw3tbaqa0" path="res://CurveLib/curves/shake_a_curve.tres" id="10_lswn8"]
 [ext_resource type="Curve" uid="uid://bsjqpdcbn3pdr" path="res://CurveLib/curves/spin_falloff_curve.tres" id="11_xuqvo"]
-[ext_resource type="Resource" uid="uid://dlxjkgvyys8g2" path="res://enemies/enemy_troll.tres" id="12_dg77c"]
 [ext_resource type="Script" uid="uid://ktd83qrij437" path="res://enemy_data.gd" id="12_w48qg"]
 [ext_resource type="Curve" uid="uid://cql1url3x3pll" path="res://CurveLib/curves/enemy_falloff_curve.tres" id="13_qsp4k"]
 [ext_resource type="Script" uid="uid://b3pv1030lx6hk" path="res://loot_manager.gd" id="13_ycdy4"]
@@ -34,7 +38,32 @@
 [ext_resource type="Resource" uid="uid://w5volrg0727r" path="res://bottles/Cola_bottle.tres" id="24_jq2sk"]
 [ext_resource type="Curve" uid="uid://mm654hy6rdos" path="res://CurveLib/curves/text_popup_curve.tres" id="25_0odxb"]
 [ext_resource type="Script" uid="uid://dlg1y37ph0bsl" path="res://encounter_manager.gd" id="25_a6jrf"]
+[ext_resource type="Resource" uid="uid://behhkt8umrar8" path="res://enemies/enemy_giant_baby.tres" id="25_blkrb"]
 [ext_resource type="PackedScene" uid="uid://bdjrugsoox4w3" path="res://bottle_loot.tscn" id="25_htxhm"]
+[ext_resource type="Resource" uid="uid://7l0frcr5iaej" path="res://bottles/Water_bottle.tres" id="29_d2t1y"]
+[ext_resource type="Resource" uid="uid://dtfxinpg6m66l" path="res://bottles/IrnBru_bottle.tres" id="30_gngh3"]
+[ext_resource type="Resource" uid="uid://rdmea3h4cpco" path="res://encounters/encounter_intro_generic.tres" id="31_facbu"]
+[ext_resource type="Resource" uid="uid://bo53qxr37u1ua" path="res://abilities/ability_gun.tres" id="33_hrvbo"]
+[ext_resource type="Script" uid="uid://vjs7ksv3ra66" path="res://encounter_map_manager.gd" id="34_ok6jj"]
+[ext_resource type="Resource" uid="uid://dbe68fp1mehrw" path="res://abilities/ability_bite.tres" id="34_uypp3"]
+[ext_resource type="Resource" uid="uid://8k5cmfi2sk5w" path="res://abilities/ability_flip.tres" id="35_blkrb"]
+[ext_resource type="Resource" uid="uid://dcfho0l7uf5hs" path="res://abilities/ability_punch.tres" id="36_abqjc"]
+[ext_resource type="Resource" uid="uid://txl6hhxeob67" path="res://abilities/ability_helmet.tres" id="37_6iyjs"]
+[ext_resource type="Resource" uid="uid://48aw0csokj18" path="res://abilities/ability_anger_buff.tres" id="38_4w656"]
+[ext_resource type="Resource" uid="uid://ba0c22gd6qtms" path="res://abilities/ability_demotivated_debuff.tres" id="39_e71vb"]
+[ext_resource type="Texture2D" uid="uid://cxuypi0maldat" path="res://art/tutorial_01.png" id="40_h8e4i"]
+[ext_resource type="Resource" uid="uid://6sgyjskfukf0" path="res://encounters/encounter_encounter_swampthing.tres" id="45_blkrb"]
+[ext_resource type="Resource" uid="uid://d4hetvrcjmh8m" path="res://encounters/encounter_encounter_basementogre.tres" id="46_abqjc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hrvbo"]
+shader = ExtResource("3_qsp4k")
+shader_parameter/progress = 0.31800001510500003
+shader_parameter/progress_2 = 0.0730000034675
+shader_parameter/wipe_color = Color(0, 0, 0, 0)
+shader_parameter/secondary_color = Color(0.879911, 0.51765805, 0.6031676, 1)
+shader_parameter/tint_color = Color(1, 1, 1, 0.26666668)
+shader_parameter/invert = false
+shader_parameter/start_angle = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kq58d"]
 shader = ExtResource("3_qsp4k")
@@ -65,6 +94,10 @@ _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.11152415, 0.12566376), 0.0, 0.0, 0, 0, Vector2(0.24287483, -0.21371675), 0.0, 0.0, 0, 0, Vector2(0.44114, 0.3384956), 0.0, 0.0, 0, 0, Vector2(0.5625774, -0.5991149), 0.0, 0.0, 0, 0, Vector2(0.685254, 0.74690264), 0.0, 0.0, 0, 0, Vector2(0.76703835, -0.81194675), 0.0, 0.0, 0, 0, Vector2(0.8562577, 1), 0.0, 0.0, 0, 0, Vector2(0.9194547, -0.98451304), 0.0, 0.0, 0, 0, Vector2(0.9603469, 0.9769911), 0.0, 0.0, 0, 0, Vector2(0.992565, -0.9499998), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 12
 
+[sub_resource type="Curve" id="Curve_ok6jj"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.26065648), 0.0, 0.0, 0, 0]
+point_count = 2
+
 [node name="Main" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -91,7 +124,7 @@ fit_content = true
 horizontal_alignment = 1
 
 [node name="Tooltip" type="Control" parent="."]
-z_index = 10
+z_index = 25
 anchors_preset = 0
 offset_right = 80.0
 offset_bottom = 60.0
@@ -99,17 +132,20 @@ pivot_offset = Vector2(40, 0)
 
 [node name="ColorRect" type="ColorRect" parent="Tooltip"]
 layout_mode = 0
-offset_top = 12.0
-offset_right = 80.0
-offset_bottom = 72.0
+offset_left = -35.0
+offset_top = 17.0
+offset_right = 105.0
+offset_bottom = 137.0
 pivot_offset = Vector2(40, 0)
-color = Color(0.2484, 0.2484, 0.2484, 1)
+color = Color(0.25, 0.25, 0.25, 0.8235294)
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Tooltip/ColorRect"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = -1
+anchor_left = 0.025
+anchor_top = 0.05
+anchor_right = 0.975
+anchor_bottom = 0.975
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/normal_font_size = 12
@@ -131,10 +167,10 @@ offset_bottom = 40.0
 
 [node name="EnemyBottleParent" type="Control" parent="AllBottles"]
 anchors_preset = 0
-offset_left = 993.0
-offset_top = 429.0
-offset_right = 1033.0
-offset_bottom = 469.0
+offset_left = 950.0
+offset_top = 481.00003
+offset_right = 989.99994
+offset_bottom = 521.0
 scale = Vector2(0.593005, 0.593005)
 
 [node name="EnemyBottle" type="Control" parent="AllBottles/EnemyBottleParent"]
@@ -208,11 +244,16 @@ offset_bottom = -98.0
 z_index = 1
 position = Vector2(254, 252)
 rotation = 1.5708
-scale = Vector2(0.22953, 0.22953)
-texture = ExtResource("2_2cqfq")
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("2_come4")
 
 [node name="bottleCenter" type="Marker2D" parent="AllBottles/EnemyBottleParent/EnemyBottle/BottleButton"]
 position = Vector2(258, 262)
+
+[node name="Enemy_bottle_arc_visuals" type="Sprite2D" parent="AllBottles/EnemyBottleParent/EnemyBottle/BottleButton"]
+material = SubResource("ShaderMaterial_hrvbo")
+position = Vector2(250.92226, 260.4906)
+texture = ExtResource("1_0xm2m")
 
 [node name="Enemy_Ability_bg_rect" type="TextureRect" parent="AllBottles/EnemyBottleParent/EnemyBottle"]
 modulate = Color(1, 1, 1, 0.298039)
@@ -236,9 +277,9 @@ offset_bottom = -379.0
 [node name="BottleParent" type="Control" parent="AllBottles"]
 anchors_preset = 0
 offset_left = 555.0
-offset_top = 419.0
+offset_top = 441.0
 offset_right = 595.0
-offset_bottom = 459.0
+offset_bottom = 481.0
 
 [node name="Bottle" type="Control" parent="AllBottles/BottleParent"]
 layout_mode = 1
@@ -318,7 +359,7 @@ z_index = 1
 position = Vector2(254, 252)
 rotation = 1.5708
 scale = Vector2(0.632274, 0.632274)
-texture = ExtResource("2_1bvp3")
+texture = ExtResource("4_h8e4i")
 
 [node name="BottleFlash" type="ColorRect" parent="AllBottles/BottleParent/Bottle/BottleButton/Sprite2D"]
 clip_contents = true
@@ -353,6 +394,10 @@ offset_right = 48.0
 offset_bottom = 31.0
 pivot_offset = Vector2(40, 60)
 
+[node name="bottle_spin_eval_position" type="Marker2D" parent="AllBottles/BottleParent"]
+position = Vector2(-356, -38)
+rotation = -1.5708
+
 [node name="env" type="Control" parent="."]
 z_index = 1
 layout_mode = 1
@@ -386,20 +431,17 @@ color = Color(0.878431, 0, 0.309804, 1)
 
 [node name="Player" type="ColorRect" parent="env/rpg_player"]
 layout_mode = 0
-offset_left = 95.9999
-offset_top = 54.0
-offset_right = 136.0
-offset_bottom = 94.0
-scale = Vector2(3.24963, 3.24963)
+offset_left = 96.0
+offset_top = 106.0
+offset_right = 256.0
+offset_bottom = 266.0
 
 [node name="HealthProgressBar" type="ProgressBar" parent="env/rpg_player/Player"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
-offset_left = 3.05211e-05
-offset_top = 42.4664
-offset_right = 3.05176e-05
-offset_bottom = 52.4664
+offset_top = 168.0
+offset_bottom = 188.0
 grow_horizontal = 2
 show_percentage = false
 
@@ -410,39 +452,38 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/normal_font_size = 6
-text = "PLAYER"
+text = "Player Health"
+scroll_active = false
+autowrap_mode = 0
 horizontal_alignment = 1
 
 [node name="ShieldProgressBar" type="ProgressBar" parent="env/rpg_player/Player"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
-offset_left = 3.05211e-05
-offset_top = 54.16001
-offset_right = 3.0517578e-05
-offset_bottom = 64.16001
+offset_top = 195.0
+offset_bottom = 215.0
 grow_horizontal = 2
 show_percentage = false
 
-[node name="PlayerHealthText" type="RichTextLabel" parent="env/rpg_player/Player/ShieldProgressBar"]
+[node name="PlayerShieldText" type="RichTextLabel" parent="env/rpg_player/Player/ShieldProgressBar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/normal_font_size = 6
-text = "PLAYER"
+text = "Player Shield"
+scroll_active = false
+autowrap_mode = 0
 horizontal_alignment = 1
 
 [node name="Label" type="Label" parent="env/rpg_player/Player"]
 layout_mode = 0
-offset_left = 4.92365
-offset_top = 13.8477
-offset_right = 44.9236
-offset_bottom = 36.8477
-scale = Vector2(0.505002, 0.505002)
+offset_left = 48.999996
+offset_top = -31.000002
+offset_right = 107.0
+offset_bottom = -8.000002
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "PLAYER"
 
@@ -451,25 +492,40 @@ position = Vector2(19.6946, 28.9264)
 
 [node name="Buff_area" type="Control" parent="env/rpg_player/Player"]
 layout_mode = 1
-offset_left = 46.466858
-offset_top = 0.92318344
-offset_right = 86.46686
-offset_bottom = 40.923183
+offset_left = 177.0
+offset_top = 118.0
+offset_right = 217.0
+offset_bottom = 158.0
+
+[node name="Player_Sprite" type="Sprite2D" parent="env/rpg_player/Player"]
+position = Vector2(79, 80)
+texture = ExtResource("5_come4")
+
+[node name="shield_symbol" type="Sprite2D" parent="env/rpg_player/Player/Player_Sprite"]
+position = Vector2(-88, 125)
+scale = Vector2(0.5607896, 0.5607896)
+texture = ExtResource("6_6iyjs")
+
+[node name="health_symbol" type="Sprite2D" parent="env/rpg_player/Player/Player_Sprite"]
+position = Vector2(-90, 98)
+scale = Vector2(0.5607896, 0.5607896)
+texture = ExtResource("7_4w656")
 
 [node name="Enemy" type="ColorRect" parent="env/rpg_player"]
 layout_mode = 0
-offset_left = 951.0
-offset_top = 60.0
-offset_right = 991.0
-offset_bottom = 100.0
-scale = Vector2(3.24963, 3.24963)
+offset_left = 951.0001
+offset_top = 112.0
+offset_right = 1111.0001
+offset_bottom = 272.0
 
 [node name="HealthProgressBar" type="ProgressBar" parent="env/rpg_player/Enemy"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
-offset_top = 40.92774
-offset_bottom = 50.92774
+offset_left = -0.00012207031
+offset_top = 172.0
+offset_right = -0.00012207031
+offset_bottom = 192.0
 grow_horizontal = 2
 show_percentage = false
 
@@ -480,55 +536,78 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/normal_font_size = 6
-text = "ENEMY"
+text = "Player health"
+scroll_active = false
+autowrap_mode = 0
 horizontal_alignment = 1
 
 [node name="ShieldProgressBar" type="ProgressBar" parent="env/rpg_player/Enemy"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
-offset_left = 0.30773926
-offset_top = 52.313652
-offset_right = 0.30773926
-offset_bottom = 62.313652
+offset_left = -0.00012207031
+offset_top = 202.0
+offset_right = -0.00012207031
+offset_bottom = 222.0
 grow_horizontal = 2
 show_percentage = false
 
-[node name="PlayerHealthText" type="RichTextLabel" parent="env/rpg_player/Enemy/ShieldProgressBar"]
+[node name="EnemyShieldText" type="RichTextLabel" parent="env/rpg_player/Enemy/ShieldProgressBar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/normal_font_size = 6
-text = "PLAYER"
+text = "Enemy shields"
+scroll_active = false
+autowrap_mode = 0
 horizontal_alignment = 1
 
 [node name="Label2" type="Label" parent="env/rpg_player/Enemy"]
 layout_mode = 0
-offset_left = 6.76999
-offset_top = 13.54
-offset_right = 46.77
-offset_bottom = 36.54
-scale = Vector2(0.505002, 0.505002)
+offset_left = 49.999847
+offset_top = -31.0
+offset_right = 104.99985
+offset_bottom = -8.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "ENEMY"
 
 [node name="Enemy_marker" type="Marker2D" parent="env/rpg_player/Enemy"]
 position = Vector2(20.6177, 27.6955)
 
+[node name="Enemy_sprite" type="Sprite2D" parent="env/rpg_player/Enemy"]
+position = Vector2(77.9999, 80)
+texture = ExtResource("5_b1qrp")
+
+[node name="shield_symbol2" type="Sprite2D" parent="env/rpg_player/Enemy/Enemy_sprite"]
+position = Vector2(83.94525, 131.94525)
+scale = Vector2(0.5607896, 0.5607896)
+texture = ExtResource("6_6iyjs")
+
+[node name="health_symbol2" type="Sprite2D" parent="env/rpg_player/Enemy/Enemy_sprite"]
+position = Vector2(81.94525, 104.94525)
+scale = Vector2(0.5607896, 0.5607896)
+texture = ExtResource("7_4w656")
+
+[node name="Enemy_buff_area" type="Control" parent="env/rpg_player/Enemy"]
+layout_mode = 1
+offset_left = -58.000122
+offset_top = 112.0
+offset_right = -18.000122
+offset_bottom = 152.0
+
 [node name="start_loot_window" type="Control" parent="env"]
+visible = false
 layout_mode = 1
 anchor_left = 0.35
 anchor_top = 0.086
 anchor_right = 0.65
 anchor_bottom = 0.322
 offset_left = -0.19998169
-offset_top = -36.728
+offset_top = 4.2719994
 offset_right = -0.2000122
-offset_bottom = -36.727997
+offset_bottom = 4.272003
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -559,10 +638,10 @@ Click n' drag to replace abilities on wheel"
 horizontal_alignment = 1
 
 [node name="starter_Loot_placement" type="Marker2D" parent="env/start_loot_window"]
-position = Vector2(205, 77)
+position = Vector2(135, 77)
 
 [node name="starter_bottle_placement" type="Marker2D" parent="env/start_loot_window"]
-position = Vector2(205, 136)
+position = Vector2(340, 77)
 
 [node name="Skip_button" type="Button" parent="env/start_loot_window"]
 visible = false
@@ -577,17 +656,21 @@ grow_horizontal = 2
 grow_vertical = 0
 text = "I'm ready!"
 
+[node name="tutorial_02" type="Sprite2D" parent="env/start_loot_window"]
+modulate = Color(0.6, 0.6, 0.6, 1)
+position = Vector2(181, 267)
+texture = ExtResource("7_4lmeg")
+
 [node name="loot_window" type="Control" parent="env"]
-visible = false
 layout_mode = 1
 anchor_left = 0.35
 anchor_top = 0.086
 anchor_right = 0.65
 anchor_bottom = 0.322
 offset_left = -0.19998169
-offset_top = -36.728
+offset_top = 4.2719994
 offset_right = -0.2000122
-offset_bottom = -36.727997
+offset_bottom = 4.272003
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -621,13 +704,16 @@ horizontal_alignment = 1
 position = Vector2(205, 77)
 
 [node name="Skip_button" type="Button" parent="env/loot_window"]
-custom_minimum_size = Vector2(0, 35)
+custom_minimum_size = Vector2(35, 35)
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -8.0
+offset_left = 317.0
+offset_top = -120.92799
+offset_right = 63.400024
+offset_bottom = -30.927994
 grow_horizontal = 2
 grow_vertical = 0
 text = "SKIP (+10c)"
@@ -654,7 +740,7 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="GameManager" type="Control" parent="Managers" node_paths=PackedStringArray("_bottle_manager_handle", "_player_manager_handle", "_tooltip_manager_handle", "_ability_wheel_manager_handle", "_loot_manager_handle", "_encounter_manager_handle")]
+[node name="GameManager" type="Control" parent="Managers" node_paths=PackedStringArray("_bottle_manager_handle", "_player_manager_handle", "_tooltip_manager_handle", "_ability_wheel_manager_handle", "_loot_manager_handle", "_encounter_manager_handle", "_start_game_menu", "_start_game_button", "_game_over_menu", "_game_over_button")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -665,9 +751,12 @@ _tooltip_manager_handle = NodePath("TooltipManager")
 _ability_wheel_manager_handle = NodePath("AbilityWheelManager")
 _loot_manager_handle = NodePath("LootManager")
 _encounter_manager_handle = NodePath("EncounterManager")
+_start_game_menu = NodePath("../../UI/Start_menu")
+_start_game_button = NodePath("../../UI/Start_menu/ColorRect/Control/Start_game")
+_game_over_menu = NodePath("../../UI/Game_over")
+_game_over_button = NodePath("../../UI/Game_over/ColorRect/Control/Restart_game")
 
-[node name="BottleManager" type="Control" parent="Managers/GameManager" node_paths=PackedStringArray("_ability_wheel_manager_handle", "_gm_handle", "_button_handle", "_bottle_center", "_bottle_status_label", "_all_bottle_handle", "_bottle_sprite", "_all_bottle_area_handle", "_all_bottles_handle", "_all_enemy_bottle_handle", "_enemy_bottle_center", "_enemy_button_handle", "_bottle_arc_visuals_handle", "_status_label", "_charging_label", "_debug_handle_a", "_debug_handle_b", "_debug_handle_c", "ability_arr", "_combo_counter_handle", "_combo_handle", "_crit_handle", "_bottle_flash_handle")]
-visible = false
+[node name="BottleManager" type="Control" parent="Managers/GameManager" node_paths=PackedStringArray("_ability_wheel_manager_handle", "_gm_handle", "_button_handle", "_bottle_center", "_bottle_spin_eval_position", "_bottle_status_label", "_all_bottle_handle", "_bottle_sprite", "_all_bottle_area_handle", "_all_bottles_handle", "_all_enemy_bottle_handle", "_enemy_bottle_center", "_enemy_button_handle", "_enemy_bottle_sprite", "_enemy_bottle_arc_visuals", "_bottle_arc_visuals_handle", "_status_label", "_charging_label", "_debug_handle_a", "_debug_handle_b", "_debug_handle_c", "ability_arr", "_combo_counter_handle", "_combo_handle", "_crit_handle", "_bottle_flash_handle")]
 anchors_preset = 0
 offset_left = -309.0
 offset_top = -256.0
@@ -679,7 +768,8 @@ _gm_handle = NodePath("..")
 _default_bottle = ExtResource("7_kq58d")
 _button_handle = NodePath("../../../AllBottles/BottleParent/Bottle/BottleButton")
 _bottle_center = NodePath("../../../AllBottles/BottleParent/Bottle/BottleButton/bottleCenter")
-_bottle_status_label = NodePath("../../../UI/Combo/General_status_label")
+_bottle_spin_eval_position = NodePath("../../../AllBottles/BottleParent/bottle_spin_eval_position")
+_bottle_status_label = NodePath("../../../UI/General_status_label")
 _all_bottle_handle = NodePath("../../../AllBottles/BottleParent/Bottle")
 _bottle_sprite = NodePath("../../../AllBottles/BottleParent/Bottle/BottleButton/Sprite2D")
 _all_bottle_area_handle = NodePath("../../../AllBottles/BottleParent/all_bottle_area")
@@ -687,6 +777,8 @@ _all_bottles_handle = NodePath("../../../AllBottles")
 _all_enemy_bottle_handle = NodePath("../../../AllBottles/EnemyBottleParent/EnemyBottle")
 _enemy_bottle_center = NodePath("../../../AllBottles/EnemyBottleParent/EnemyBottle/BottleButton/bottleCenter")
 _enemy_button_handle = NodePath("../../../AllBottles/EnemyBottleParent/EnemyBottle/BottleButton")
+_enemy_bottle_sprite = NodePath("../../../AllBottles/EnemyBottleParent/EnemyBottle/BottleButton/Sprite2D")
+_enemy_bottle_arc_visuals = NodePath("../../../AllBottles/EnemyBottleParent/EnemyBottle/BottleButton/Enemy_bottle_arc_visuals")
 _bottle_arc_visuals_handle = NodePath("../../../AllBottles/BottleParent/Bottle/BottleButton/Bottle_arc_visuals")
 _bottle_arc_range = 120.0
 _spin_curve = ExtResource("9_lswn8")
@@ -716,7 +808,7 @@ _gm_handle = NodePath("..")
 _ability_scene = ExtResource("3_272bh")
 _distance_to_center = 180.0
 _bottle_center_marker = NodePath("../../../AllBottles/BottleParent/Bottle/BottleButton/bottleCenter")
-_initial_abilities = Array[ExtResource("7_kek77")]([ExtResource("18_0rl1p"), ExtResource("18_0rl1p"), ExtResource("18_0rl1p"), ExtResource("18_0rl1p"), ExtResource("18_0rl1p")])
+_initial_abilities = Array[ExtResource("7_kek77")]([ExtResource("18_0rl1p"), ExtResource("18_0rl1p"), ExtResource("36_abqjc"), ExtResource("36_abqjc")])
 _ability_wheel_bg = NodePath("../../../AllBottles/BottleParent/Bottle/Ability_bg_rect")
 _ability_parent = NodePath("../../../AllBottles/BottleParent/all_bottle_area")
 _enemy_bottle_center = NodePath("../../../AllBottles/EnemyBottleParent/EnemyBottle/BottleButton/bottleCenter")
@@ -724,7 +816,7 @@ _enemy_bottle_button = NodePath("../../../AllBottles/EnemyBottleParent/EnemyBott
 _enemy_wheel = NodePath("../../../AllBottles/EnemyBottleParent/EnemyBottle/Enemy_Ability_bg_rect")
 _shake_curve = SubResource("Curve_2cqfq")
 
-[node name="PlayerManager" type="Control" parent="Managers/GameManager" node_paths=PackedStringArray("_playerHandle", "_playerMarker", "_enemyHandle", "_enemyMarker", "_enemy_bottle_handle", "_player_bottle_handle", "_player_health_handle", "_player_shield_handle", "_player_health_text", "_player_shield_text", "_enemy_health_handle", "_enemy_shield_handle", "_enemy_health_text", "_enemy_shield_text", "_ability_indicator_handle", "_buff_area_handle")]
+[node name="PlayerManager" type="Control" parent="Managers/GameManager" node_paths=PackedStringArray("_playerHandle", "_playerMarker", "_enemyHandle", "_enemyMarker", "_enemy_bottle_handle", "_player_bottle_handle", "_player_sprite", "_enemy_sprite", "_player_name_handle", "_enemy_name_handle", "_player_health_handle", "_player_shield_handle", "_player_health_text", "_player_shield_text", "_enemy_health_handle", "_enemy_shield_handle", "_enemy_health_text", "_enemy_shield_text", "_ability_indicator_handle", "_buff_area_handle", "_enemy_buff_area_handle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -735,20 +827,25 @@ _enemyHandle = NodePath("../../../env/rpg_player/Enemy")
 _enemyMarker = NodePath("../../../env/rpg_player/Enemy/Enemy_marker")
 _enemy_bottle_handle = NodePath("../../../AllBottles/EnemyBottleParent")
 _player_bottle_handle = NodePath("../../../AllBottles/BottleParent")
+_player_sprite = NodePath("../../../env/rpg_player/Player/Player_Sprite")
+_enemy_sprite = NodePath("../../../env/rpg_player/Enemy/Enemy_sprite")
+_player_name_handle = NodePath("../../../env/rpg_player/Player/Label")
+_enemy_name_handle = NodePath("../../../env/rpg_player/Enemy/Label2")
 _player_health_handle = NodePath("../../../env/rpg_player/Player/HealthProgressBar")
 _player_shield_handle = NodePath("../../../env/rpg_player/Player/ShieldProgressBar")
 _playerHealth = 100
 _player_health_text = NodePath("../../../env/rpg_player/Player/HealthProgressBar/PlayerHealthText")
-_player_shield_text = NodePath("../../../env/rpg_player/Player/HealthProgressBar/PlayerHealthText")
+_player_shield_text = NodePath("../../../env/rpg_player/Player/ShieldProgressBar/PlayerShieldText")
 _enemy_health_handle = NodePath("../../../env/rpg_player/Enemy/HealthProgressBar")
 _enemy_shield_handle = NodePath("../../../env/rpg_player/Enemy/ShieldProgressBar")
 _enemy_health_text = NodePath("../../../env/rpg_player/Enemy/HealthProgressBar/EnemyHealthText")
-_enemy_shield_text = NodePath("../../../env/rpg_player/Enemy/ShieldProgressBar/PlayerHealthText")
+_enemy_shield_text = NodePath("../../../env/rpg_player/Enemy/ShieldProgressBar/EnemyShieldText")
 _enemyHealth = 100
 _ability_indicator_handle = NodePath("../../../env/rpg_player/Ability_indicator")
-_all_enemy_encounters = Array[ExtResource("12_w48qg")]([ExtResource("12_dg77c")])
-_default_enemy_encounter = ExtResource("12_dg77c")
+_all_enemy_encounters = Array[ExtResource("12_w48qg")]([ExtResource("25_blkrb")])
+_default_enemy_encounter = ExtResource("25_blkrb")
 _buff_area_handle = NodePath("../../../env/rpg_player/Player/Buff_area")
+_enemy_buff_area_handle = NodePath("../../../env/rpg_player/Enemy/Enemy_buff_area")
 _buff_scene = ExtResource("5_4k2k6")
 _shoot_curve = SubResource("Curve_w48qg")
 _strike_curve = ExtResource("14_vivmo")
@@ -769,8 +866,8 @@ _loot_chest_button = NodePath("../../../env/loot_window/Chest_button")
 _loot_chest_help_text = NodePath("../../../env/loot_window/Ability_tooltip_rtl")
 _loot_placement_marker = NodePath("../../../env/loot_window/Loot_placement")
 _loot_spacing = 64.0
-_bottle_pool = Array[ExtResource("23_seu75")]([ExtResource("7_kq58d"), ExtResource("24_jq2sk"), ExtResource("24_jq2sk")])
-_loot_pool = Array[ExtResource("7_kek77")]([ExtResource("8_4c57u"), ExtResource("8_efxa6")])
+_bottle_pool = Array[ExtResource("23_seu75")]([ExtResource("7_kq58d"), ExtResource("24_jq2sk"), ExtResource("29_d2t1y"), ExtResource("30_gngh3")])
+_loot_pool = Array[ExtResource("7_kek77")]([ExtResource("8_4c57u"), ExtResource("8_efxa6"), ExtResource("33_hrvbo"), ExtResource("34_uypp3"), ExtResource("35_blkrb"), ExtResource("36_abqjc"), ExtResource("37_6iyjs"), ExtResource("38_4w656"), ExtResource("18_0rl1p"), ExtResource("39_e71vb")])
 _ability_instance_scene = ExtResource("3_272bh")
 _bottle_instance_scene = ExtResource("25_htxhm")
 _chest_open_curve = SubResource("Curve_xuqvo")
@@ -780,13 +877,13 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("25_a6jrf")
-_encounter_list = Array[ExtResource("5_cegan")]([ExtResource("6_82xsv"), ExtResource("7_getpj"), ExtResource("6_82xsv"), ExtResource("6_82xsv"), ExtResource("7_getpj")])
+_encounter_list = Array[ExtResource("5_cegan")]([ExtResource("31_facbu"), ExtResource("6_82xsv"), ExtResource("7_getpj"), ExtResource("45_blkrb"), ExtResource("7_getpj"), ExtResource("46_abqjc"), ExtResource("6_82xsv"), ExtResource("7_getpj")])
 _default_encounter = ExtResource("6_82xsv")
-_all_enemy_encounters = Array[ExtResource("12_w48qg")]([ExtResource("12_dg77c")])
-_default_enemy_encounter = ExtResource("12_dg77c")
+_all_enemy_encounters = Array[ExtResource("12_w48qg")]([ExtResource("25_blkrb")])
+_default_enemy_encounter = ExtResource("25_blkrb")
 _win_encounter_button = NodePath("../../../UI/Debug_win_encounter_button")
 
-[node name="TooltipManager" type="Control" parent="Managers/GameManager" node_paths=PackedStringArray("_tootlip_handle", "_tooltip_text", "_text_popup_handle", "_text_popup_text_handle", "_cash_label", "_status_text_label")]
+[node name="TooltipManager" type="Control" parent="Managers/GameManager" node_paths=PackedStringArray("_tootlip_handle", "_tooltip_text", "_text_popup_handle", "_text_popup_text_handle", "_cash_label", "_status_text_label", "_round_timer_handle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -797,6 +894,17 @@ _text_popup_handle = NodePath("../../../TextPopup")
 _text_popup_text_handle = NodePath("../../../TextPopup/RichTextLabel")
 _cash_label = NodePath("../../../UI/Cash_label")
 _status_text_label = NodePath("../../../UI/RoundTimer_Label")
+_round_timer_handle = NodePath("../../../UI/RoundTimer_Label")
+
+[node name="EncounterMapManager" type="Control" parent="Managers/GameManager" node_paths=PackedStringArray("_map_labels", "_map_position", "_e")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("34_ok6jj")
+_map_labels = [NodePath("../../../UI/encounter_map/encounterA_label"), NodePath("../../../UI/encounter_map/encounterB_label"), NodePath("../../../UI/encounter_map/encounterC_label"), NodePath("../../../UI/encounter_map/encounterD_label"), NodePath("../../../UI/encounter_map/encounterE_label")]
+_map_position = NodePath("../../../UI/encounter_map/Marker2D")
+_map_fade_curve = SubResource("Curve_ok6jj")
+_e = NodePath("../EncounterManager")
 
 [node name="CurveLib" parent="." instance=ExtResource("20_82xsv")]
 layout_mode = 0
@@ -824,17 +932,106 @@ mouse_filter = 2
 [node name="RoundTimer_Label" type="Label" parent="UI"]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = 279.0
-offset_bottom = 302.0
+anchor_left = 0.35
+anchor_top = 0.035
+anchor_right = 0.65
+anchor_bottom = 0.15
+offset_left = -0.19998169
+offset_top = 103.32
+offset_right = -0.2000122
+offset_bottom = 103.32
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_font_sizes/font_size = 32
 text = "ROUND TIMER"
 horizontal_alignment = 1
 
+[node name="encounter_map" type="Control" parent="UI"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 1
+anchor_top = 0.035
+anchor_right = 1.0
+anchor_bottom = 0.035
+offset_top = -5.6800003
+offset_bottom = 29.32
+grow_horizontal = 2
+
+[node name="encounterA_label" type="Label" parent="UI/encounter_map"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -508.0
+offset_right = -413.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Encounter A"
+horizontal_alignment = 1
+
+[node name="encounterB_label" type="Label" parent="UI/encounter_map"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -291.0
+offset_right = -196.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Encounter B"
+horizontal_alignment = 1
+
+[node name="encounterC_label" type="Label" parent="UI/encounter_map"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -17.5
+offset_right = 17.5
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Encounter C"
+horizontal_alignment = 1
+
+[node name="encounterD_label" type="Label" parent="UI/encounter_map"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 212.0
+offset_right = 247.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Encounter D"
+horizontal_alignment = 1
+
+[node name="encounterE_label" type="Label" parent="UI/encounter_map"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 397.0
+offset_right = 490.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Encounter E"
+horizontal_alignment = 1
+
+[node name="Marker2D" type="Marker2D" parent="UI/encounter_map"]
+position = Vector2(59, 4.3199997)
+
+[node name="ColorRect" type="ColorRect" parent="UI/encounter_map"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_left = 2.0
+offset_top = 31.32
+offset_right = 2.0
+offset_bottom = 36.32
+grow_horizontal = 2
+
 [node name="ChargingPower_label" type="Label" parent="UI"]
+z_index = 2
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -842,9 +1039,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -72.0
-offset_top = 244.0
+offset_top = 125.0
 offset_right = 78.0
-offset_bottom = 268.0
+offset_bottom = 149.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(75, 12)
@@ -870,10 +1067,10 @@ layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.05
 anchor_right = 0.5
-offset_left = 2.0
-offset_top = 602.0
-offset_right = 114.0
-offset_bottom = 625.0
+offset_left = 88.399994
+offset_top = 334.0
+offset_right = 200.40002
+offset_bottom = 357.0
 grow_horizontal = 2
 text = "Coins: Xc"
 
@@ -884,10 +1081,11 @@ anchors_preset = -1
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 18.0
-offset_top = -11.0
+offset_top = 257.0
 offset_right = 418.0
-offset_bottom = 12.0
+offset_bottom = 280.0
 grow_vertical = 2
+theme_override_font_sizes/font_size = 10
 text = "Debug #1"
 
 [node name="DebugHandle_B_label" type="Label" parent="UI"]
@@ -897,10 +1095,11 @@ anchors_preset = -1
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 18.0
-offset_top = 24.5
+offset_top = 274.0
 offset_right = 418.0
-offset_bottom = 47.5
+offset_bottom = 297.0
 grow_vertical = 2
+theme_override_font_sizes/font_size = 10
 text = "Debug #2"
 
 [node name="DebugHandle_C_label" type="Label" parent="UI"]
@@ -910,10 +1109,11 @@ anchors_preset = -1
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 18.0
-offset_top = 59.5
+offset_top = 292.5
 offset_right = 418.0
-offset_bottom = 82.5
+offset_bottom = 315.5
 grow_vertical = 2
+theme_override_font_sizes/font_size = 10
 text = "Debug #2"
 
 [node name="Combo" type="TextureRect" parent="UI"]
@@ -925,6 +1125,7 @@ offset_left = 484.0
 offset_top = 305.0
 offset_right = 644.0
 offset_bottom = 465.0
+pivot_offset = Vector2(80, 80)
 texture = ExtResource("1_0xm2m")
 expand_mode = 2
 
@@ -936,25 +1137,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(80, 50)
+pivot_offset = Vector2(80, 80)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 24
 text = "COMBO"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="General_status_label" type="Label" parent="UI/Combo"]
-z_index = 1
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(80, 50)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 24
-text = "STATUS"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -976,7 +1162,158 @@ vertical_alignment = 1
 [node name="Debug_win_encounter_button" type="Button" parent="UI"]
 layout_mode = 0
 offset_left = 18.0
-offset_top = 456.0
-offset_right = 160.0
-offset_bottom = 487.0
+offset_top = 557.0
+offset_right = 110.0
+offset_bottom = 579.0
+theme_override_font_sizes/font_size = 10
 text = "WIN ENCOUNTER"
+
+[node name="General_status_label" type="Label" parent="UI"]
+z_index = 1
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -78.0
+offset_top = 3.0
+offset_right = 50.0
+offset_bottom = 131.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(64, 64)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 24
+text = "STATUS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Start_menu" type="Control" parent="UI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="UI/Start_menu"]
+z_index = 15
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6666667, 0.6666667, 0.6666667, 0.8)
+
+[node name="Control" type="Control" parent="UI/Start_menu/ColorRect"]
+layout_mode = 1
+anchor_left = 0.35
+anchor_top = 0.1
+anchor_right = 0.65
+anchor_bottom = 0.4
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Start_game" type="Button" parent="UI/Start_menu/ColorRect/Control"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -46.5
+offset_top = -31.0
+offset_right = 46.5
+grow_horizontal = 2
+grow_vertical = 0
+text = "Start game"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="UI/Start_menu/ColorRect/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[wave][font_size=20]Fight off creatures!!!
+ your actions are chosen by spinning the bottle![/font_size][/wave]
+
+Customize the abilities on the wheel
+adjust the placement for better stats
+choose the bottle for your strategy in between battles.
+
+Once in the fight, click and drag the bottle to spin it!!"
+scroll_active = false
+horizontal_alignment = 1
+
+[node name="tutorial_01" type="Sprite2D" parent="UI/Start_menu/ColorRect"]
+modulate = Color(0.6, 0.6, 0.6, 1)
+position = Vector2(584, 318)
+texture = ExtResource("40_h8e4i")
+
+[node name="Game_over" type="Control" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="UI/Game_over"]
+z_index = 15
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6666667, 0.6666667, 0.6666667, 0.8)
+
+[node name="Control" type="Control" parent="UI/Game_over/ColorRect"]
+layout_mode = 1
+anchor_left = 0.35
+anchor_top = 0.1
+anchor_right = 0.65
+anchor_bottom = 0.4
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Restart_game" type="Button" parent="UI/Game_over/ColorRect/Control"]
+visible = false
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -46.5
+offset_top = -31.0
+offset_right = 46.5
+grow_horizontal = 2
+grow_vertical = 0
+text = "Aw man"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="UI/Game_over/ColorRect/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[wave][font_size=40]YOU DIED![/font_size][/wave]"
+scroll_active = false
+horizontal_alignment = 1

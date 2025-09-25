@@ -15,6 +15,11 @@ static var Main:PlayerManager
 @export var _enemy_bottle_handle:Control
 @export var _player_bottle_handle:Control
 
+@export var _player_sprite:Sprite2D
+@export var _enemy_sprite:Sprite2D
+@export var _player_name_handle:Label
+@export var _enemy_name_handle:Label
+
 @export var _player_health_handle:ProgressBar
 @export var _player_shield_handle:ProgressBar
 @export var _playerHealth:int
@@ -35,9 +40,10 @@ var anim_time = 0.4
 @export var _ability_indicator_handle:Control
 @export var _all_enemy_encounters:Array[EnemyData]
 @export var _default_enemy_encounter:EnemyData
-
 @export var _buff_area_handle:Control
+@export var _enemy_buff_area_handle:Control
 @export var _all_buffs:Array[Buff]
+@export var _all_enemy_buffs:Array[Buff]
 @export var _buff_spacing:float = 40.0
 @export var _buff_scene:PackedScene
 
@@ -69,8 +75,11 @@ func _ready():
 	initialize_player()
 	
 func initialize_player():
-	_playerHealth = 100
+	_playerHealth = 30
 	_playerShield = 0
+	
+	#Handles manually
+	#_player_sprite = X
 	
 func start_gameplay_round():
 	start_new_encounter()
@@ -83,11 +92,15 @@ func end_encounter():
 	SimonTween.start_tween(_enemyHandle,"position:x",200,0.35).set_relative(true)
 
 func start_new_encounter():
-	var enc:EnemyData = GameManager.Main.get_encounter_manager().get_encounter_data()
+	var enc:EnemyData = GameManager.Main.get_encounter_manager().get_encounter_data()._enemy
 	
 	_enemyHealth = enc._health
 	_enemyShield = enc._shield
 	_enemy_health_handle.max_value = enc._health
+	
+	_enemy_sprite.texture = enc._portrait
+	_enemy_name_handle.text = enc._name
+	
 	update_health_values()
 	enemy_spawn()
 	
@@ -132,7 +145,7 @@ func adjust_player_health(damage:float, op:Op):
 			_playerHealth += damage
 		Op.MINUS:
 			_playerShield -= damage
-			damage = _playerShield < 0 if abs(_playerShield) else 0
+			damage = abs(_playerShield) if _playerShield < 0 else 0
 			_playerShield = clamp(_playerShield,0,50)
 			_playerHealth -= damage
 		Op.SHIELD_PLUS:
@@ -144,8 +157,8 @@ func adjust_enemy_health(damage:float, op:Op):
 			_enemyHealth += damage
 		Op.MINUS:
 			_enemyHealth -= damage
-			damage = _enemyShield < 0 if abs(_enemyShield) else 0
-			_enemyShield = clamp(_playerShield,0,50)
+			damage = abs(_enemyShield) if _enemyShield < 0 else 0
+			_enemyShield = clamp(_enemyShield,0,50)
 			_enemyHealth -= damage
 		Op.SHIELD_PLUS:
 			_enemyShield += damage
@@ -153,7 +166,6 @@ func adjust_enemy_health(damage:float, op:Op):
 func execute_ability(ability:Ability,mag:int,isPlayerAbility:bool):
 	var data = ability._data
 	var damage = mag
-	print("AYYYY!!! TIME FOR DATAAAA")
 	if (isPlayerAbility):
 		match data._ability_type:
 			AbilityData.Type.DAMAGE:
@@ -172,7 +184,7 @@ func execute_ability(ability:Ability,mag:int,isPlayerAbility:bool):
 			AbilityData.Type.SHIELD:
 				adjust_player_health(damage,Op.SHIELD_PLUS)
 				await ability_to_player(ability)
-				G.popup_text.emit(str(damage)+" Healed!", _playerHandle.global_position)
+				G.popup_text.emit(str(damage)+" SHIELD!", _playerHandle.global_position)
 				
 	else:
 		match data._ability_type:
@@ -183,7 +195,15 @@ func execute_ability(ability:Ability,mag:int,isPlayerAbility:bool):
 			AbilityData.Type.HEAL:
 				adjust_enemy_health(damage,Op.PLUS)
 				await ability_to_enemy(ability)
-				G.popup_text.emit(str(damage)+" Healed!", _playerHandle.global_position)
+				G.popup_text.emit(str(damage)+" Healed!", _enemyHandle.global_position)
+			AbilityData.Type.BUFF:
+				add_buff(ability._data._buff_data,false)
+				await ability_to_enemy(ability)
+				G.popup_text.emit("Buffed!", _enemyHandle.global_position)
+			AbilityData.Type.SHIELD:
+				adjust_enemy_health(damage,Op.SHIELD_PLUS)
+				await ability_to_enemy(ability)
+				G.popup_text.emit(str(damage)+" SHIELD!", _enemyHandle.global_position)
 		
 	return update_health_values()
 
@@ -249,20 +269,29 @@ func hit_character(char:Control):
 func initialize_buff_list():
 	_all_buffs = []
 
-func add_buff(b:BuffData):
-	if (check_for_existing_buff(b)):
+func add_buff(b:BuffData, is_player:bool = true):
+	if (check_for_existing_buff(b,is_player)):
 		return
 	
 	var instance = _buff_scene.instantiate() as Buff
 	instance.initialize_data(b)
-	_buff_area_handle.add_child(instance)
-	_all_buffs.append(instance)
+	if (is_player):
+		_buff_area_handle.add_child(instance)
+		_all_buffs.append(instance)
+		instance.global_position = _buff_area_handle.global_position
+		instance.global_position.x += (_all_buffs.size() * (instance.size.x + _buff_spacing))
+	else:
+		_enemy_buff_area_handle.add_child(instance)
+		_all_enemy_buffs.append(instance)
+		instance.global_position = _enemy_buff_area_handle.global_position
+		instance.global_position.x -= (_all_enemy_buffs.size() * (instance.size.x - _buff_spacing))
 	
-	instance.global_position = _buff_area_handle.global_position
-	instance.global_position.x += (_all_buffs.size() * (instance.size.x + _buff_spacing))
-	
-func evaluate_all_buffs(mag:float, move:AbilityData):
-	for b in _all_buffs:
+func evaluate_all_buffs(mag:float, move:AbilityData,is_player:bool = true):
+	var arr_to_eval = _all_buffs
+	if (!is_player):
+		arr_to_eval = _all_enemy_buffs
+		
+	for b in arr_to_eval:
 		mag = await evaluate_buff(mag,b,move)
 		
 	return mag
@@ -290,12 +319,19 @@ func evaluate_buff(mag:float,b:Buff,move:AbilityData):
 	
 	
 func remove_buff(b:Buff):
-	b.destroy()
 	_all_buffs.erase(b)
+	_all_enemy_buffs.erase(b)
+	b.destroy()
 	
 	update_buff_layout()
 
-func check_for_existing_buff(b:BuffData):
+func check_for_existing_buff(b:BuffData, is_player:bool = true):
+	var arr_to_check
+	if (is_player):
+		arr_to_check = _all_buffs
+	else:
+		arr_to_check = _all_enemy_buffs
+		
 	for d in _all_buffs:
 		if (b.name == d._data.name):
 			d.update_duration(-b.duration)
@@ -306,10 +342,17 @@ func check_for_existing_buff(b:BuffData):
 
 func update_buff_layout():
 	var b:Buff
-	for i in range(_all_buffs.size()):
-		b = _all_buffs[i]
-		b.global_position = _buff_area_handle.global_position
-		b.global_position.x += (i * (b.size.x + _buff_spacing))
+	if _all_buffs.size() > 0:
+		for i in range(_all_buffs.size()):
+			b = _all_buffs[i]
+			b.global_position = _buff_area_handle.global_position
+			b.global_position.x += (i * (b.size.x + _buff_spacing))
+		
+	if _all_enemy_buffs.size() > 0:
+		for l in range(_all_enemy_buffs.size()):
+			b = _all_enemy_buffs[l]
+			b.global_position = _enemy_buff_area_handle.global_position
+			b.global_position.x -= (l * (b.size.x - _buff_spacing))
 
 func on_adjust_cash(adjustment:int):
 	print("ADDING CASH!!! "+str(adjustment))

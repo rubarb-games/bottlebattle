@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=3 format=3 uid="uid://8k5cmfi2sk5w"]
+
+[ext_resource type="Texture2D" uid="uid://dqfqeuceaa6x2" path="res://art/abilities/ability_flip.png" id="1_ste87"]
+[ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="3_rjw3u"]
+
+[resource]
+script = ExtResource("3_rjw3u")
+rarity = 1
+_ability_type = 4
+_ability_name = "Do a flip"
+_ability_description = "Stylish! Add 12 shield"
+_ability_icon = ExtResource("1_ste87")
+_magnitude = 3
+_initial_placement = -1.0
+metadata/_custom_type_script = "uid://crb7n5yxpbd5t"
