@@ -41,7 +41,8 @@ var _enemy_bottle_data:Bottle
 @export var _bottle_arc_alpha:float = 0.0
 @export var _arc_fading_in:bool = false
 
-var _speed_charging_treshold:float = 5
+var _speed_charging_treshold_base:float = 20.0
+var _speed_charging_treshold:float = 18.0
 var _speed_treshold:float = 50.0
 var _time_between_rounds:float = 0.5
 
@@ -81,15 +82,18 @@ var _spinning_timer:float = 0.0
 
 var _main_click_pressed: bool = false
 var _secondary_click_pressed: bool = false
+var _hovering_over_bottle:bool = false
+var _bottle_over_charging_treshold_speed = false
 
+var _grab_position:Vector2
 var _last_mouse_position: Vector2 = Vector2.ZERO
 var _mouse_delta: Vector2 = Vector2.ZERO
 var _mouse_dampen_multipler:float = 5.0
 var _mouse_speed_buildup: Vector2 = Vector2.ZERO
 
-var _mouse_speed_multiplier: float = 1000.0
+@export var _mouse_speed_multiplier: float = 2000.0
 
-var _bottle_rotation_multiplier: float = 3.5
+var _bottle_rotation_multiplier: float = 3.0
 var _bottle_dampen_multiplier: float = 3.0
 var _bottle_angular_velocity:float = 0.0
 var _bottle_angular_velocity_treshold:float = 2
@@ -149,10 +153,23 @@ func _process(delta):
 			process_enemy(delta)
 
 func get_input(delta):
-	if (Input.is_action_just_pressed("main_click")):
+	if ((get_global_mouse_position().distance_to(_bottle_center.global_position) < 100.0)):
+		if (!_hovering_over_bottle):
+			G.cursor_active.emit()
+		_hovering_over_bottle = true
+	else:
+		if _hovering_over_bottle:
+			G.cursor_inactive.emit()
+		_hovering_over_bottle = false
+	
+	if (Input.is_action_just_pressed("main_click") and _hovering_over_bottle):
 		_mouse_speed_buildup = Vector2.ZERO
+		#_main_click_pressed = get_input_inside_bb(get_global_mouse_position(),_button_handle.global_position.x,_button_handle.global_position.y,_button_handle.size.x,_button_handle.size.y)
 		_main_click_pressed = true
+		_grab_position = get_global_mouse_position()
+		G.cursor_grab_sprite.emit()
 	elif (Input.is_action_just_released("main_click")):
+		G.cursor_active_sprite.emit()
 		pass
 		#_main_click_pressed = false
 		#check_rotation()
@@ -169,11 +186,24 @@ func get_input(delta):
 	_debug_handle_b.text = str(get_global_mouse_position())
 	get_mouse_delta(_main_click_pressed, delta)
 		
+func get_input_inside_bb(pos:Vector2,x:float,y:float,w:float,h:float):
+	if (\
+	pos.x > x and pos.x < x + w \
+	and pos.y > y and pos.y < y + h \
+	):
+		return true
+	return false
+	
 func get_input_idle(delta):
 	get_input(delta)
 
 func get_input_charging(delta):
 	get_input(delta)
+	var _relative_mouse_mag = Vector2( _grab_position - _bottle_center.global_position).length()
+	var _actual_mouse_mag =  Vector2(get_global_mouse_position() - _bottle_center.global_position).length()
+	var _mouse_pos_adjusted = Vector2(get_global_mouse_position() - _bottle_center.global_position).normalized() * _relative_mouse_mag + _bottle_center.global_position
+	
+	G.cursor_override_position.emit(_mouse_pos_adjusted)
 
 func _notification(what: int):
 	if what == NOTIFICATION_FOCUS_EXIT:
@@ -183,10 +213,20 @@ func _notification(what: int):
 		
 
 func check_charging_state():
-	if (!_main_click_pressed and abs(_bottle_angular_velocity) > _speed_charging_treshold):
+	if (abs(_bottle_angular_velocity) > _speed_charging_treshold):
+		if (!_bottle_over_charging_treshold_speed):
+			G.cursor_set_green.emit()
+		_bottle_over_charging_treshold_speed = true
+		change_state(BottleStatus.SPINNING)
+	else:
+		if (_bottle_over_charging_treshold_speed):
+			G.cursor_set_white.emit()
+		_bottle_over_charging_treshold_speed = false
+
+	if (!_main_click_pressed and _bottle_over_charging_treshold_speed):
 		change_state(BottleStatus.SPINNING)
 		
-	if (!_main_click_pressed and abs(_bottle_angular_velocity) < _speed_charging_treshold):
+	if (!_main_click_pressed and !_bottle_over_charging_treshold_speed):
 		change_state(BottleStatus.IDLE)
 	
 func check_idle_state():
@@ -199,18 +239,24 @@ func change_state(state:BottleStatus):
 			#NEXT TURN STARTED!
 			G.next_turn_started.emit()
 			flash_bottle()
-			SimonTween.start_tween(_all_bottle_handle,"modulate",Color.WHITE,1)
+			_speed_charging_treshold = _speed_charging_treshold_base + randf_range(-4.0,4.0)
+			SimonTween.start_tween(_all_bottle_handle,"modulate",Color.WHITE,G.anim_speed_slow)
 			#_status_label.text = "BOTTLE IS IDLE!"
 			reset_values()
 			shrink_charge_value()
+			G.popup_round_timer_text.emit("Click and drag to spin!")
 			_status = state
 		BottleStatus.CHARGING:
-			SimonTween.start_tween(_all_bottle_handle,"modulate",Color.WHITE,1)
+			SimonTween.start_tween(_all_bottle_handle,"modulate",Color.WHITE,G.anim_speed_slow)
 			flash_bottle()
+			G.popup_round_timer_text.emit("Charging!!!")
 			#_status_label.text = "CHARGING!"
 			_status = state
 		BottleStatus.SPINNING:
 			flash_bottle()
+			G.cursor_set_white.emit()
+			G.cursor_active_sprite.emit()
+			G.cursor_resume_position.emit()
 			SimonTween.start_tween(_charging_label,"scale",Vector2(1,1),G.anim_speed_slow*6,null)
 			SimonTween.start_tween(_charging_label,"modulate:a",0.0,G.anim_speed_slow*6,null)
 			G.popup_round_timer_text.emit("Spinning!")
@@ -226,6 +272,7 @@ func change_state(state:BottleStatus):
 			_status = state
 		BottleStatus.EVALUATING:
 			#_status_label.text = "BOTTLE IS EVALUATING!"
+			_bottle_over_charging_treshold_speed = false
 			shrink_charge_value()
 			eval_direction()
 			_status = state
@@ -258,7 +305,6 @@ func reset_values():
 	_last_mouse_position = get_global_mouse_position()
 	_main_click_pressed = false
 	_charging_label.modulate.a = 1.0
-	
 	_charging_label.scale = Vector2.ZERO
 	#_bottle_arc_visuals_handle.modulate.a = 0.0
 
@@ -286,7 +332,10 @@ func calculate_bottle_rotation(delta):
 	
 	_bottle_angular_velocity = lerp(_bottle_angular_velocity,_bottle_angular_velocity+tempVelocity, delta)
 	
-	dampen_bottle_spin(delta)
+	if !Input.is_action_pressed("main_click"):
+		dampen_bottle_spin(delta*15)
+	else:
+		dampen_bottle_spin(delta*5)
 
 	_button_handle.rotation +=  _bottle_angular_velocity * delta# * _bottle_rotation_multiplier
 	
@@ -305,7 +354,7 @@ func get_mouse_delta(is_mouse_clicked:bool, delta):
 	if (is_mouse_clicked):
 		var mouse_force = _mouse_speed_buildup.length()
 		#_mouse_delta * delta * _mouse_speed_multiplier
-		_mouse_speed_buildup += (_mouse_delta * delta * _mouse_speed_multiplier)
+		_mouse_speed_buildup += (_mouse_delta * delta * _mouse_speed_multiplier) * _mouse_velocity_curve.sample(_mouse_delta.length()/200.0)
 	_mouse_speed_buildup = lerp(_mouse_speed_buildup,Vector2.ZERO,delta * _mouse_dampen_multipler)
 	_debug_handle_a.text = "Mouse speed: "+str(Vector2(roundf(_mouse_speed_buildup.x*100)/100,roundf(_mouse_speed_buildup.y*100)/100))
 
@@ -327,11 +376,11 @@ func spin_bottle(delta):
 	if (_total_degrees_spun > 360.0):
 		if (_combo_handle.modulate.a < 1):
 			#print("HELL YEAH; MORE COMMMMB")
-			SimonTween.start_tween(_combo_handle,"modulate:a",1.0,0.25)
+			SimonTween.start_tween(_combo_handle,"modulate:a",1.0,G.anim_speed_fast)
 		_total_degrees_spun -= 360
 		_combo_number += 1
 		_combo_counter_handle.text = str(_combo_number)+"+ \n SPINS!"
-		SimonTween.start_tween(_combo_counter_handle,"scale",Vector2(0.2,0.2),0.4,_shake_curve).set_relative(true)
+		SimonTween.start_tween(_combo_counter_handle,"scale",Vector2(0.2,0.2),G.anim_speed_fast,_shake_curve).set_relative(true)
 
 func eval_direction():
 	var top_direction_match = -1.01
@@ -354,7 +403,7 @@ func eval_direction():
 		if (abs(angle_diff) < (_bottle_arc_range/2.0)):
 			a.popup_ability_name()
 			#G.popup_text.emit(a._ability_name,a.global_position)
-			SimonTween.start_tween(_button_handle,"scale",Vector2(0.05,0.05),0.5,_shake_curve).set_relative(true)
+			SimonTween.start_tween(_button_handle,"scale",Vector2(0.05,0.05),G.anim_speed_medium,_shake_curve).set_relative(true)
 			await SimonTween.start_tween(a,"scale",Vector2(1.2,1.2),0.5,_shake_curve).set_relative(true).tween_finished
 			await a.bright_flash()	
 			abilities_in_range.append(a)
@@ -370,12 +419,24 @@ func eval_direction():
 		#HIT!
 		var ab:Ability
 		var last_in_chain:bool = false
-		for i in range(abilities_in_range.size()):
+		#Set critical hit if there's only ONE ability hit
+		var is_crit:bool = true if abilities_in_range.size() == 1 else false
+		
+		#Sort to prioritize non-enemy abilities
+		abilities_in_range.sort_custom(func(a:Ability, b:Ability): \
+		if (b._data._ability_type == AbilityData.Type.WHEEL_DEBUFF):
+			return true
+		else:
+			return false
+		)
+		
+		#Loop thorugh all abilities in range, max being determined by the bottle
+		for i in range(clamp(abilities_in_range.size(),0,_bottle_data.max_bottle_abilities)):
 			ab = abilities_in_range[i]
 			ability_magnitude = 0.0
 			if (i >= (abilities_in_range.size() - 1)):
 				last_in_chain = true
-			current_mag = await evaluate_single_ability(ab,last_in_chain, true, true)
+			current_mag = await evaluate_single_ability(ab,last_in_chain, true, true, is_crit)
 			ability_magnitude += current_mag
 			
 			#EXECUTE THE ABILITY
@@ -411,7 +472,7 @@ func apply_bottle(b:Bottle):
 	_bottle_arc_visuals_handle.material.set_shader_parameter("tint_color",Color(1.0,1.0,1.0,0.0))
 	
 	flash_bottle()
-	SimonTween.start_tween(_button_handle,"scale",Vector2(0.05,0.05),0.5,_shake_curve).set_relative(true)
+	SimonTween.start_tween(_button_handle,"scale",Vector2(0.05,0.05),G.anim_speed_medium,_shake_curve).set_relative(true)
 	
 				
 func popup_status(txt:String):
@@ -420,13 +481,13 @@ func popup_status(txt:String):
 	_bottle_status_label.text = txt
 	_bottle_status_label.modulate.a = 0.0
 	_bottle_status_label.position.y = y
-	SimonTween.start_tween(_bottle_status_label,"modulate:a",1.0,0.5,null)
-	await SimonTween.start_tween(_bottle_status_label,"position:y",y * -1,0.5,null).set_relative(true).tween_finished
+	SimonTween.start_tween(_bottle_status_label,"modulate:a",1.0,G.anim_speed_medium,null)
+	await SimonTween.start_tween(_bottle_status_label,"position:y",y * -1,G.anim_speed_medium,null).set_relative(true).tween_finished
 	
 	await get_tree().create_timer(0.5).timeout
 
-	SimonTween.start_tween(_bottle_status_label,"modulate:a",0.0,0.5,null)
-	await SimonTween.start_tween(_bottle_status_label,"position:y",y,0.5,null).set_relative(true).tween_finished
+	SimonTween.start_tween(_bottle_status_label,"modulate:a",0.0,G.anim_speed_medium,null)
+	await SimonTween.start_tween(_bottle_status_label,"position:y",y,G.anim_speed_medium,null).set_relative(true).tween_finished
 	_bottle_status_label.position.y = 0.0
 				
 func calc_angle_between(a:float, b:float):
@@ -435,9 +496,10 @@ func calc_angle_between(a:float, b:float):
 		return 360.0 - angle
 	return angle
 				
-func evaluate_single_ability(ab:Ability, last_in_chain:bool = false, involve_combos:bool = false, involve_crits:bool = false, is_player:bool = true) -> float:
+func evaluate_single_ability(ab:Ability, last_in_chain:bool = false, involve_combos:bool = false, involve_crits:bool = false, is_player:bool = true, is_crit:bool = false) -> float:
+	await get_tree().create_timer(G.anim_speed_fast).timeout
 	print_rich("[color=AQUA]Executing ability: "+str(ab._ability_name)+" - Distance is: "+str(ab.get_distance_to_hit()))
-	var anim_time:float = 0.2
+	var anim_time:float = G.anim_speed_fast
 	
 	#ab.bright_flash()
 	#G.popup_text.emit(ab._ability_name,ab.global_position)
@@ -467,10 +529,11 @@ func evaluate_single_ability(ab:Ability, last_in_chain:bool = false, involve_com
 		mag += _combo_number
 		await ab.damage_numbers_update(mag)
 	
-	if (ab.get_distance_to_hit() < _bottle_crit_range and involve_crits):
+	#if (ab.get_distance_to_hit() < _bottle_crit_range and involve_crits):
+	if (is_crit):
 		#Handling critical hits
-		SimonTween.start_tween(_crit_handle,"scale",Vector2(1.4,1.4),G.anim_speed_slow,_bottle_flash_curve).set_relative(true)
-		await SimonTween.start_tween(_crit_handle,"modulate:a",1.0,G.anim_speed_slow).tween_finished
+		SimonTween.start_tween(_crit_handle,"scale",Vector2(1.4,1.4),G.anim_speed_medium,_shake_curve).set_relative(true)
+		await SimonTween.start_tween(_crit_handle,"modulate:a",1.0,G.anim_speed_medium).tween_finished
 		SimonTween.start_tween(_crit_handle,"scale",Vector2(-0.5,-0.5),anim_time,_strike_curve).set_relative(true)
 		await SimonTween.start_tween(_crit_handle,"global_position",ab.global_position-_crit_handle.global_position-(_crit_handle.size/2),anim_time,_strike_curve).set_relative(true).tween_finished
 		_crit_handle.modulate.a = 0
@@ -485,7 +548,7 @@ func evaluate_single_ability(ab:Ability, last_in_chain:bool = false, involve_com
 		_combo_counter_handle.scale = Vector2(1,1)
 	
 	await ab.damage_numbers_go_down()
-		
+	
 	return mag
 				
 func sort_by_distance(a:Ability, b:Ability):
@@ -523,7 +586,7 @@ func fade_arc_visuals(delta:float):
 	return true
 					
 func shrink_charge_value():
-	SimonTween.start_tween(_charging_label,"scale",Vector2.ZERO,0.3)
+	SimonTween.start_tween(_charging_label,"scale",Vector2.ZERO,G.anim_speed_fast)
 					
 func setup_enemy_spin():
 	_enemy_spin_time_target = randf_range(_enemy_initial_spin_time.x,_enemy_initial_spin_time.y)
@@ -593,10 +656,10 @@ func update_bottle_arc_visuals():
 func reset_combo():
 	_combo_number = 0
 	if (_combo_handle.modulate.a > 0):
-		await SimonTween.start_tween(_combo_handle,"modulate:a",0.0,0.3).tween_finished
+		await SimonTween.start_tween(_combo_handle,"modulate:a",0.0,G.anim_speed_fast).tween_finished
 		
 	if _crit_handle.modulate.a > 0:
-		SimonTween.start_tween(_crit_handle,"modulate:a",0.0,0.3)
+		SimonTween.start_tween(_crit_handle,"modulate:a",0.0,G.anim_speed_fast)
 	_combo_counter_handle.text = ""
 	_combo_counter_handle.position = Vector2(0,0)
 	_combo_counter_handle.scale = Vector2(1,1)
@@ -637,12 +700,12 @@ func on_stop_drag_bottle(b:BottleLoot):
 	var distance_to_bottle = b.global_position.distance_to(_bottle_center.global_position)
 	if (distance_to_bottle < 100):
 		_bottle_data = b._bottle_data
-		await SimonTween.start_tween(b,"global_position",_bottle_center.global_position,1.0,null).tween_finished
+		await SimonTween.start_tween(b,"global_position",_bottle_center.global_position,G.anim_speed_slow,null).tween_finished
 		apply_bottle(_bottle_data)
 		G.add_bottle.emit(b)
 		b.destroy()
 	else:
-		await SimonTween.start_tween(b,"global_position",_initial_drag_position,1.0,null).tween_finished
+		await SimonTween.start_tween(b,"global_position",_initial_drag_position,G.anim_speed_slow,null).tween_finished
 
 func on_encounter_start():
 	var enc:GameEncounters = GameManager.Main.get_encounter_manager().get_encounter_data()

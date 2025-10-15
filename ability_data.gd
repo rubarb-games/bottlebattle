@@ -1,6 +1,6 @@
 class_name AbilityData extends Resource
 
-enum Type { DAMAGE, BUFF, DEBUFF, HEAL, SHIELD }
+enum Type { DAMAGE, BUFF, DEBUFF, WHEEL_DEBUFF, HEAL, SHIELD }
 enum Rarity { NORMAL, RARE, EPIC }
 enum Target { PLAYER, ENEMY, GLOBAL }
 
@@ -11,6 +11,7 @@ enum Target { PLAYER, ENEMY, GLOBAL }
 @export var _ability_name:String
 @export var _ability_description:String
 @export var _ability_icon:Texture
+@export var _ability_range:float = 70.0
 @export var _magnitude:int
 
 @export var _initial_placement:float

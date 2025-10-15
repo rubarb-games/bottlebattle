@@ -8,7 +8,6 @@ script = ExtResource("2_1k7nl")
 name = "Pepsi"
 description = "Decent range, decent crit, maximum taste"
 arc_range = 140.0
-crit_multiplier = 1.1000000000058208
 crit_range = 15.0
 bottle_texture = ExtResource("1_wmj8u")
 metadata/_custom_type_script = "uid://itvjxvyfjv7n"

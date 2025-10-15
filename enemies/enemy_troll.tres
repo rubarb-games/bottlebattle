@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyData" load_steps=8 format=3 uid="uid://dlxjkgvyys8g2"]
+[gd_resource type="Resource" script_class="EnemyData" load_steps=10 format=3 uid="uid://dlxjkgvyys8g2"]
 
 [ext_resource type="Script" uid="uid://ktd83qrij437" path="res://enemy_data.gd" id="1_mudn5"]
 [ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="1_qfuxq"]
@@ -6,7 +6,16 @@
 [ext_resource type="Resource" uid="uid://ddflvalnqneyr" path="res://bottles/Pepsi_bottle.tres" id="3_mlpbl"]
 [ext_resource type="Resource" uid="uid://d4cfx8gaml60e" path="res://abilities/ability_heavy_strike.tres" id="3_t1nlr"]
 [ext_resource type="Resource" uid="uid://48aw0csokj18" path="res://abilities/ability_anger_buff.tres" id="4_mlpbl"]
+[ext_resource type="Texture2D" uid="uid://dqfqeuceaa6x2" path="res://art/abilities/ability_flip.png" id="5_28opt"]
 [ext_resource type="Texture2D" uid="uid://bxkxvdw4qri2i" path="res://art/characters/goblinoid.png" id="6_t1nlr"]
+
+[sub_resource type="Resource" id="Resource_kd5sm"]
+script = ExtResource("1_qfuxq")
+_ability_type = 3
+_ability_name = "Fucke up breaker"
+_ability_description = "Fucks up your flowwww"
+_ability_icon = ExtResource("5_28opt")
+metadata/_custom_type_script = "uid://crb7n5yxpbd5t"
 
 [resource]
 script = ExtResource("1_mudn5")
@@ -14,6 +23,6 @@ _name = "Goblinoid"
 _description = "Ayyy, it me, the goblin"
 _health = 20
 _portrait = ExtResource("6_t1nlr")
-_enemy_abilities = Array[ExtResource("1_qfuxq")]([ExtResource("3_t1nlr"), ExtResource("2_mlpbl"), ExtResource("4_mlpbl")])
+_enemy_abilities = Array[ExtResource("1_qfuxq")]([ExtResource("3_t1nlr"), ExtResource("2_mlpbl"), ExtResource("4_mlpbl"), SubResource("Resource_kd5sm")])
 _enemy_bottle = ExtResource("3_mlpbl")
 metadata/_custom_type_script = "uid://ktd83qrij437"

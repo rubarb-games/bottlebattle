@@ -75,7 +75,7 @@ func _ready():
 	initialize_player()
 	
 func initialize_player():
-	_playerHealth = 30
+	_playerHealth = 20
 	_playerShield = 0
 	
 	#Handles manually
@@ -88,8 +88,8 @@ func end_gameplay_round():
 	end_encounter()
 
 func end_encounter():
-	SimonTween.start_tween(_enemy_bottle_handle,"position:x",300.0,0.5).set_relative(true)
-	SimonTween.start_tween(_enemyHandle,"position:x",200,0.35).set_relative(true)
+	SimonTween.start_tween(_enemy_bottle_handle,"position:x",300.0,G.anim_speed_medium).set_relative(true)
+	SimonTween.start_tween(_enemyHandle,"position:x",200,G.anim_speed_fast).set_relative(true)
 
 func start_new_encounter():
 	var enc:EnemyData = GameManager.Main.get_encounter_manager().get_encounter_data()._enemy
@@ -98,14 +98,16 @@ func start_new_encounter():
 	_enemyShield = enc._shield
 	_enemy_health_handle.max_value = enc._health
 	
+	remove_all_enemy_buffs()
+	
 	_enemy_sprite.texture = enc._portrait
 	_enemy_name_handle.text = enc._name
 	
 	update_health_values()
 	enemy_spawn()
 	
-	SimonTween.start_tween(_enemyHandle,"position:x",-200,0.35).set_relative(true)
-	await SimonTween.start_tween(_enemy_bottle_handle,"position:x",-300.0,0.5).set_relative(true).tween_finished
+	SimonTween.start_tween(_enemyHandle,"position:x",-200,G.anim_speed_fast).set_relative(true)
+	await SimonTween.start_tween(_enemy_bottle_handle,"position:x",-300.0,G.anim_speed_medium).set_relative(true).tween_finished
 	
 	G.start_encounter.emit(enc)
 
@@ -181,6 +183,10 @@ func execute_ability(ability:Ability,mag:int,isPlayerAbility:bool):
 				add_buff(ability._data._buff_data)
 				await ability_to_player(ability)
 				G.popup_text.emit(str(damage)+" Buffed!", _playerHandle.global_position)
+			AbilityData.Type.DEBUFF:
+				add_buff(ability._data._buff_data,false)
+				await ability_to_enemy(ability)
+				G.popup_text.emit(str(damage)+" Debuffed!", _enemyHandle.global_position)
 			AbilityData.Type.SHIELD:
 				adjust_player_health(damage,Op.SHIELD_PLUS)
 				await ability_to_player(ability)
@@ -200,6 +206,10 @@ func execute_ability(ability:Ability,mag:int,isPlayerAbility:bool):
 				add_buff(ability._data._buff_data,false)
 				await ability_to_enemy(ability)
 				G.popup_text.emit("Buffed!", _enemyHandle.global_position)
+			AbilityData.Type.DEBUFF:
+				add_buff(ability._data._buff_data,true)
+				await ability_to_player(ability)
+				G.popup_text.emit(str(damage)+" Debuffed!", _playerHandle.global_position)
 			AbilityData.Type.SHIELD:
 				adjust_enemy_health(damage,Op.SHIELD_PLUS)
 				await ability_to_enemy(ability)
@@ -210,26 +220,26 @@ func execute_ability(ability:Ability,mag:int,isPlayerAbility:bool):
 func ability_to_enemy(a:Ability):
 	_ability_indicator_handle.modulate.a = 1.0
 	var initial_ability_position = a.global_position
-	await SimonTween.start_tween(a,"global_position",_enemyMarker.global_position-a.global_position,0.35,_strike_curve).set_relative(true).tween_finished
+	await SimonTween.start_tween(a,"global_position",_enemyMarker.global_position-a.global_position,G.anim_speed_fast,_strike_curve).set_relative(true).tween_finished
 	enemy_hit()
-	SimonTween.start_tween(a,"global_position",initial_ability_position,0.75,_shoot_curve)
+	SimonTween.start_tween(a,"global_position",initial_ability_position,G.anim_speed_medium,_shoot_curve)
 	return
 
 func ability_to_player(a:Ability):
 	_ability_indicator_handle.modulate.a = 1.0
 	var initial_ability_position = a.global_position
-	await SimonTween.start_tween(a,"global_position",_playerMarker.global_position-a.global_position,0.35,_strike_curve).set_relative(true).tween_finished
+	await SimonTween.start_tween(a,"global_position",_playerMarker.global_position-a.global_position,G.anim_speed_fast,_strike_curve).set_relative(true).tween_finished
 	enemy_hit()
-	SimonTween.start_tween(a,"global_position",initial_ability_position,0.75,_shoot_curve)
+	SimonTween.start_tween(a,"global_position",initial_ability_position,G.anim_speed_medium,_shoot_curve)
 	return
 
 func ability_from_player_to_enemy():
 	_ability_indicator_handle.global_position = _playerHandle.global_position
 	#await SimonTween.start_tween(_ability_indicator_handle,"modulate:a",1.0,0.25).tween_finished
 	_ability_indicator_handle.modulate.a = 1.0
-	await SimonTween.start_tween(_ability_indicator_handle,"global_position",_enemyHandle.global_position,0.65,_shoot_curve).tween_finished
+	await SimonTween.start_tween(_ability_indicator_handle,"global_position",_enemyHandle.global_position,G.anim_speed_medium,_shoot_curve).tween_finished
 	enemy_hit()
-	SimonTween.start_tween(_ability_indicator_handle,"modulate:a",0.0,0.25)
+	SimonTween.start_tween(_ability_indicator_handle,"modulate:a",0.0,G.anim_speed_fast)
 	return
 	
 func ability_from_enemy_to_player():
@@ -248,13 +258,13 @@ func player_die():
 	G.player_die.emit()
 	
 func enemy_die():
-	SimonTween.start_tween(_enemyHandle,"position:y",25.0,0.5).set_relative(true)
-	SimonTween.start_tween(_enemyHandle,"modulate:a",0.0,0.65)
+	SimonTween.start_tween(_enemyHandle,"position:y",25.0,G.anim_speed_medium).set_relative(true)
+	SimonTween.start_tween(_enemyHandle,"modulate:a",0.0,G.anim_speed_medium)
 	G.enemy_die.emit()
 
 func enemy_spawn():
-	SimonTween.start_tween(_enemyHandle,"position:y",-25.0,0.5).set_relative(true)
-	SimonTween.start_tween(_enemyHandle,"modulate:a",1.0,0.65)
+	SimonTween.start_tween(_enemyHandle,"position:y",-25.0,G.anim_speed_medium).set_relative(true)
+	SimonTween.start_tween(_enemyHandle,"modulate:a",1.0,G.anim_speed_medium)
 	pass
 
 func enemy_hit():
@@ -264,7 +274,7 @@ func player_hit():
 	hit_character(_playerHandle)
 	
 func hit_character(char:Control):
-	SimonTween.start_tween(char,"position:x",25.0,0.4,_shake_curve).set_relative(true)
+	SimonTween.start_tween(char,"position:x",25.0,G.anim_speed_fast,_shake_curve).set_relative(true)
 
 func initialize_buff_list():
 	_all_buffs = []
@@ -317,6 +327,10 @@ func evaluate_buff(mag:float,b:Buff,move:AbilityData):
 		await b.shake()
 	return mag
 	
+	
+func remove_all_enemy_buffs():
+	for b in _all_enemy_buffs:
+		remove_buff(b)
 	
 func remove_buff(b:Buff):
 	_all_buffs.erase(b)

@@ -83,6 +83,7 @@ func green_flash():
 	_green_flash.scale = Vector2(1.0,1.0)
 
 func on_mouse_entered():
+	G.cursor_active.emit()
 	G.display_tooltip.emit(_bottle_name+"\n"+_bottle_description)
 
 func set_distance_to_hit(distance:float):
@@ -92,6 +93,7 @@ func get_distance_to_hit() -> float:
 	return bottle_distance
 
 func on_mouse_exited():
+	G.cursor_inactive.emit()
 	G.hide_tooltip.emit()
 
 func on_ability_pressed():

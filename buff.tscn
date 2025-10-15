@@ -8,7 +8,7 @@ _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.099371076, 0.982464), 0.0, 0.0, 0, 0, Vector2(0.16100629, -0.87634885), 0.0, 0.0, 0, 0, Vector2(0.34339622, 0.23426259), 0.0, 0.0, 0, 0, Vector2(0.51194966, -0.38534176), 0.0, 0.0, 0, 0, Vector2(0.7207547, 0.06474817), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 7
 
-[node name="Buff_rect" type="ColorRect" node_paths=PackedStringArray("_visual_handle", "_duration_label")]
+[node name="Buff_rect" type="ColorRect" node_paths=PackedStringArray("_visual_handle", "_duration_label", "_buff_visual")]
 anchors_preset = -1
 offset_right = 64.0
 offset_bottom = 64.0
@@ -17,6 +17,7 @@ script = ExtResource("1_vhsdr")
 _shake_curve = SubResource("Curve_vhsdr")
 _visual_handle = NodePath("ColorRect")
 _duration_label = NodePath("ColorRect/Duration_left")
+_buff_visual = NodePath("ColorRect/Sprite2D")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 0

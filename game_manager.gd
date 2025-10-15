@@ -10,6 +10,7 @@ static var Encounter:EncounterManager
 static var MapManager:EncounterMapManager
 
 var _state_delay:float = 1.0
+var _encounter_number:int = 0
 
 enum RoundStatus { GAMEPLAY, IN_PROGRESS, LOOT, INTRO, OTHER, GAMEOVER, SHOP }
 var _round_status:RoundStatus = RoundStatus.GAMEPLAY
@@ -26,6 +27,9 @@ var _round_status:RoundStatus = RoundStatus.GAMEPLAY
 
 @export var _game_over_menu:Control
 @export var _game_over_button:Button
+
+
+@export var _encounter_counter:Label
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -134,6 +138,8 @@ func get_encounter_manager():
 func on_round_gameplay_start():
 	await get_tree().process_frame
 	
+	_encounter_number += 1
+	_encounter_counter.text = "Encounter: "+str(_encounter_number)
 	_bottle_manager_handle.start_gameplay_round()
 	_ability_wheel_manager_handle.start_gameplay_round()
 	_player_manager_handle.start_gameplay_round()

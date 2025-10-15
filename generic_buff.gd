@@ -4,6 +4,7 @@ class_name Buff extends ColorRect
 @export var _shake_curve:Curve
 @export var _visual_handle:Control
 @export var _duration_label:RichTextLabel
+@export var _buff_visual:Sprite2D
 var _elapsed_duration:int
 
 # Called when the node enters the scene tree for the first time.
@@ -18,10 +19,11 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
-func initialize_data(b):
+func initialize_data(b:BuffData):
 	_data = b
 	_elapsed_duration = 0
 	_duration_label.text = str(_data.duration)
+	_buff_visual.texture = b.texture
 
 func update_duration(new_dur:int):
 	_elapsed_duration += new_dur

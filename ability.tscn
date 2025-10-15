@@ -22,7 +22,7 @@ _limits = [0.0, 1.2, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 9.01073, 0, 0, Vector2(0.20922, 1.17022), 0.0, 0.0, 0, 0, Vector2(0.588652, 0.934115), 0.0, 0.0, 0, 0, Vector2(0.801418, 1.0192), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 5
 
-[node name="ability" type="ColorRect" node_paths=PackedStringArray("_ability_button_handle", "_bright_flash", "_green_flash", "_adjacency_bonus_indicator", "_damage_numbers_handle", "_ability_name_handle", "_ability_sprite", "_ability_slot_handle")]
+[node name="ability" type="ColorRect" node_paths=PackedStringArray("_ability_level_handle", "_ability_button_handle", "_bright_flash", "_green_flash", "_adjacency_bonus_indicator", "_damage_numbers_handle", "_ability_name_handle", "_ability_sprite", "_ability_slot_handle")]
 z_index = 4
 anchors_preset = -1
 offset_left = 544.0
@@ -32,6 +32,7 @@ offset_bottom = 141.0
 script = ExtResource("1_uvmqb")
 _ability_name = "Strike"
 _ability_description = "FUCK OVER THE ENEMY"
+_ability_level_handle = NodePath("Control/Ability_level_backdrop/Ability_level")
 _ability_button_handle = NodePath("Control/Button")
 _bright_flash = NodePath("Control/brightFlashRect")
 _green_flash = NodePath("Control/Green_flash")
@@ -39,13 +40,23 @@ _bright_flash_curve = SubResource("Curve_uvmqb")
 _green_flash_curve = SubResource("Curve_0oypb")
 _shake_curve = SubResource("Curve_sfoxn")
 _spawn_curve = SubResource("Curve_2som6")
-_adjacency_bonus_indicator = NodePath("Control/AdjacencyRangeIndicator")
+_adjacency_bonus_indicator = NodePath("AdjacencyRangeIndicator")
 _damage_numbers_handle = NodePath("Control/DamageNumbers")
 _ability_name_handle = NodePath("Control/Ability_name")
 _ability_sprite = NodePath("Control/Ability_slot/Sprite2D")
 _ability_slot_handle = NodePath("Control/Ability_slot")
 _ability_player_color = Color(0.319167, 0.61692375, 0.59454656, 1)
 _ability_enemy_color = Color(0.85484815, 0.40764624, 0.4050256, 1)
+
+[node name="AdjacencyRangeIndicator" type="TextureRect" parent="."]
+self_modulate = Color(1, 1, 1, 0.172549)
+z_index = -2
+layout_mode = 0
+offset_right = 60.0
+offset_bottom = 60.0
+mouse_filter = 2
+texture = ExtResource("3_sfoxn")
+expand_mode = 1
 
 [node name="Control" type="Control" parent="."]
 anchors_preset = 0
@@ -96,16 +107,6 @@ pivot_offset = Vector2(32, 32)
 mouse_filter = 2
 color = Color(0.36862746, 0.8901961, 0, 0.62352943)
 
-[node name="AdjacencyRangeIndicator" type="TextureRect" parent="Control"]
-self_modulate = Color(1, 1, 1, 0.172549)
-z_index = -2
-layout_mode = 0
-offset_right = 60.0
-offset_bottom = 60.0
-mouse_filter = 2
-texture = ExtResource("3_sfoxn")
-expand_mode = 2
-
 [node name="DamageNumbers" type="RichTextLabel" parent="Control"]
 layout_mode = 1
 anchors_preset = 15
@@ -133,6 +134,23 @@ pivot_offset = Vector2(20, 20)
 mouse_filter = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 text = "Ability Name"
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ability_level_backdrop" type="ColorRect" parent="Control"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = -20.0
+offset_right = 60.0
+
+[node name="Ability_level" type="RichTextLabel" parent="Control/Ability_level_backdrop"]
+layout_mode = 0
+offset_top = -2.0
+offset_right = 20.0
+offset_bottom = 18.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "1"
 scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1

@@ -1,13 +1,25 @@
-[gd_resource type="Resource" script_class="AbilityData" load_steps=3 format=3 uid="uid://ba0c22gd6qtms"]
+[gd_resource type="Resource" script_class="AbilityData" load_steps=5 format=3 uid="uid://ba0c22gd6qtms"]
 
 [ext_resource type="Texture2D" uid="uid://bc6g6gqvp407t" path="res://art/abilities/ability_sleep.png" id="1_8dor5"]
+[ext_resource type="Script" uid="uid://djl1mugibkmpl" path="res://buff_data.gd" id="2_uwgk1"]
 [ext_resource type="Script" uid="uid://crb7n5yxpbd5t" path="res://ability_data.gd" id="2_w52dv"]
+
+[sub_resource type="Resource" id="Resource_ff5y7"]
+script = ExtResource("2_uwgk1")
+name = "Demotivated"
+description = "Damage reduced by 4!"
+duration = 3
+magnitude = -4.0
+texture = ExtResource("1_8dor5")
+metadata/_custom_type_script = "uid://djl1mugibkmpl"
 
 [resource]
 script = ExtResource("2_w52dv")
-_ability_type = 1
+_ability_type = 2
+_ability_target = 1
 _ability_name = "Demotivation"
-_ability_description = "Do nothing"
+_ability_description = "Reduce enemy damage by 4"
 _ability_icon = ExtResource("1_8dor5")
 _initial_placement = -1.0
+_buff_data = SubResource("Resource_ff5y7")
 metadata/_custom_type_script = "uid://crb7n5yxpbd5t"

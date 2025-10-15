@@ -6,3 +6,4 @@ enum Type { DAMAGE_UP, DAMAGE_REDUCTION }
 @export var description:String = ""
 @export var duration:int = 5
 @export var magnitude:float = 2.0
+@export var texture:Texture

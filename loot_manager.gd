@@ -57,6 +57,8 @@ func _ready() -> void:
 	G.add_ability.connect(on_add_ability)
 	G.add_bottle.connect(on_add_bottle)
 	
+	G.single_loot_picked.connect(on_single_loot_picked)
+	
 	_loot_skip_button.pressed.connect(on_pressed_skip_button)
 	_loot_chest_button.pressed.connect(on_pressed_chest_button)
 	
@@ -68,6 +70,7 @@ func _process(delta: float) -> void:
 	pass
 
 func add_loot(a:AbilityData, is_intro:bool = false) -> Ability:
+	print_rich("[color=GOLD]Loot added")
 	var instance = _ability_instance_scene.instantiate() as Ability
 	
 	instance._ability_name = a._ability_name
@@ -168,7 +171,7 @@ func set_skip_reward(rew:int):
 	_loot_skip_button.text = "SKIP " + "("+str(_skip_reward)+"c bonus)"
 
 func disable_chest():
-	SimonTween.start_tween(_loot_chest_help_text,"modulate:a",1.0,0.5,null)
+	SimonTween.start_tween(_loot_chest_help_text,"modulate:a",1.0,G.anim_speed_medium,null)
 	_loot_chest_button.disabled = true
 	_loot_chest_button.visible = false
 
@@ -185,20 +188,23 @@ func ability_filter_by_rarity(loot:AbilityData):
 	
 func on_pressed_chest_button():
 	
-	await SimonTween.start_tween(_loot_chest_button,"rotation",deg_to_rad(60),1.0,_chest_open_curve).set_start_snap(true).set_relative(true).tween_finished
+	await SimonTween.start_tween(_loot_chest_button,"rotation",deg_to_rad(60),G.anim_speed_slow,_chest_open_curve).set_start_snap(true).set_relative(true).tween_finished
 	disable_chest()
 	add_encounter_loot()
 	set_skip_reward(0)
 	_pressed_chest_button = true
 	
-func on_add_ability(a:Ability,fromLoot:bool):
-	if fromLoot:
+func on_add_ability(a:Ability,target:String, source:String):
+	if source == "loot":
 		remove_loot(a)
 		
 		loot_picked()
 
 func on_add_bottle(b:BottleLoot):
 	remove_bottle(b)
+	loot_picked()
+
+func on_single_loot_picked():
 	loot_picked()
 
 func on_intro_start():

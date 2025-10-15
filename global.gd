@@ -2,7 +2,8 @@ extends Node
 
 var ability_size = 40
 
-var anim_speed_fast = 0.3
+var anim_speed_fast = 0.2
+var anim_speed_medium = 0.6
 var anim_speed_slow = 1.0
 
 signal display_tooltip(text:String)
@@ -10,6 +11,7 @@ signal hide_tooltip()
 
 signal execute_ability(ability:Ability,combo:int)
 signal loot_picked()
+signal single_loot_picked()
 signal intro_loot_picked()
 
 signal start_encounter(encounter:EnemyData)
@@ -37,6 +39,20 @@ signal adjust_cash(cash_adjustment:int)
 
 signal flash_bottle()
 signal flash_bottle_green()
+
+signal cursor_active_sprite()
+signal cursor_idle_sprite()
+signal cursor_grab_sprite()
+
+signal cursor_inactive()
+signal cursor_active()
+
+signal cursor_set_green()
+signal cursor_set_white()
+signal cursor_set_red()
+
+signal cursor_override_position()
+signal cursor_resume_position()
 
 signal round_new_start()
 signal round_new_end()
