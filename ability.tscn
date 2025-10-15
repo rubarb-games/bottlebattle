@@ -1,8 +1,16 @@
-[gd_scene load_steps=8 format=3 uid="uid://clxpvqr5pbke6"]
+[gd_scene load_steps=10 format=3 uid="uid://clxpvqr5pbke6"]
 
 [ext_resource type="Script" uid="uid://b15ip6weljnks" path="res://generic_ability.gd" id="1_uvmqb"]
 [ext_resource type="Texture2D" uid="uid://cvwx7aib332dg" path="res://art/abilities/knife.png" id="2_uvmqb"]
 [ext_resource type="Texture2D" uid="uid://xqs47jqm2t0r" path="res://Circle.png" id="3_sfoxn"]
+
+[sub_resource type="Curve" id="Curve_fs08f"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.4669811, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_yujsf"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.495283, 1), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="Curve" id="Curve_uvmqb"]
 _data = [Vector2(0, 0), 0.0, 27.6386, 0, 0, Vector2(0.0177305, 0.998227), 0.0, 0.0, 0, 0, Vector2(0.57565, 0.076493), -0.401676, -0.401676, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -22,17 +30,23 @@ _limits = [0.0, 1.2, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 9.01073, 0, 0, Vector2(0.20922, 1.17022), 0.0, 0.0, 0, 0, Vector2(0.588652, 0.934115), 0.0, 0.0, 0, 0, Vector2(0.801418, 1.0192), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 5
 
-[node name="ability" type="ColorRect" node_paths=PackedStringArray("_ability_level_handle", "_ability_button_handle", "_bright_flash", "_green_flash", "_adjacency_bonus_indicator", "_damage_numbers_handle", "_ability_name_handle", "_ability_sprite", "_ability_slot_handle")]
+[node name="ability" type="ColorRect" node_paths=PackedStringArray("status_text_handle", "green_adjancency_handle", "green_highlight_handle", "adjacency_line_handle", "_ability_level_handle", "_ability_level_frame_handle", "_ability_button_handle", "_bright_flash", "_green_flash", "_adjacency_bonus_indicator", "_damage_numbers_handle", "_ability_name_handle", "_ability_sprite", "_ability_slot_handle")]
 z_index = 4
-anchors_preset = -1
 offset_left = 544.0
 offset_top = 141.0
 offset_right = 544.0
 offset_bottom = 141.0
 script = ExtResource("1_uvmqb")
+status_text_handle = NodePath("Control/Status_text")
+status_text_opacity_curve = SubResource("Curve_fs08f")
+status_text_position_curve = SubResource("Curve_yujsf")
+green_adjancency_handle = NodePath("OccupancyRangeIndicator")
+green_highlight_handle = NodePath("Control/Green_bg_flash")
+adjacency_line_handle = NodePath("Adjacency_line")
 _ability_name = "Strike"
 _ability_description = "FUCK OVER THE ENEMY"
 _ability_level_handle = NodePath("Control/Ability_level_backdrop/Ability_level")
+_ability_level_frame_handle = NodePath("Control/Ability_level_backdrop")
 _ability_button_handle = NodePath("Control/Button")
 _bright_flash = NodePath("Control/brightFlashRect")
 _green_flash = NodePath("Control/Green_flash")
@@ -48,7 +62,22 @@ _ability_slot_handle = NodePath("Control/Ability_slot")
 _ability_player_color = Color(0.319167, 0.61692375, 0.59454656, 1)
 _ability_enemy_color = Color(0.85484815, 0.40764624, 0.4050256, 1)
 
+[node name="Adjacency_line" type="Line2D" parent="."]
+z_index = -1
+points = PackedVector2Array(0, 0, 100, 0)
+default_color = Color(0, 1, 0.15686275, 1)
+
 [node name="AdjacencyRangeIndicator" type="TextureRect" parent="."]
+self_modulate = Color(1, 1, 1, 0.172549)
+z_index = -2
+layout_mode = 0
+offset_right = 60.0
+offset_bottom = 60.0
+mouse_filter = 2
+texture = ExtResource("3_sfoxn")
+expand_mode = 1
+
+[node name="OccupancyRangeIndicator" type="TextureRect" parent="."]
 self_modulate = Color(1, 1, 1, 0.172549)
 z_index = -2
 layout_mode = 0
@@ -107,19 +136,36 @@ pivot_offset = Vector2(32, 32)
 mouse_filter = 2
 color = Color(0.36862746, 0.8901961, 0, 0.62352943)
 
+[node name="Green_bg_flash" type="ColorRect" parent="Control"]
+modulate = Color(1, 1, 1, 0)
+z_index = -2
+layout_mode = 0
+offset_left = -19.0
+offset_top = -20.0
+offset_right = 61.0
+offset_bottom = 60.0
+pivot_offset = Vector2(40, 40)
+mouse_filter = 2
+color = Color(0.36862746, 0.8901961, 0, 0.62352943)
+
 [node name="DamageNumbers" type="RichTextLabel" parent="Control"]
+z_index = 15
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -85.0
+offset_bottom = -85.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(20, 20)
 mouse_filter = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-text = "25"
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
 horizontal_alignment = 1
-vertical_alignment = 1
+vertical_alignment = 2
 
 [node name="Ability_name" type="RichTextLabel" parent="Control"]
 layout_mode = 1
@@ -132,8 +178,31 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(20, 20)
 mouse_filter = 2
-theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_colors/default_color = Color(0.9867516, 0.9867516, 0.9867516, 1)
+theme_override_constants/outline_size = 2
 text = "Ability Name"
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Status_text" type="RichTextLabel" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -62.0
+offset_top = -50.0
+offset_right = 58.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(20, 20)
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+bbcode_enabled = true
+text = "Status text"
 scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -143,6 +212,7 @@ layout_mode = 0
 offset_left = 40.0
 offset_top = -20.0
 offset_right = 60.0
+pivot_offset = Vector2(10, 10)
 
 [node name="Ability_level" type="RichTextLabel" parent="Control/Ability_level_backdrop"]
 layout_mode = 0

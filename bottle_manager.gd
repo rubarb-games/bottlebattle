@@ -17,6 +17,9 @@ var _bottle_data:Bottle
 @export var _bottle_sprite:Sprite2D
 @export var _all_bottle_area_handle:Control
 
+@export var adjacency_line_handle:Line2D
+var line_end_position:Vector2 = Vector2.ZERO
+
 @export var _all_bottles_handle:Control
 
 @export var _all_enemy_bottle_handle:Control
@@ -36,7 +39,7 @@ var _enemy_bottle_data:Bottle
 @export var _bottle_crit_range:float = 5.0
 @export var _bottle_max_abilities:int = 3
 
-@export var _bottle_crit_multiplier:float = 1.1
+@export var _bottle_crit_multiplier:float = 5.0
 
 @export var _bottle_arc_alpha:float = 0.0
 @export var _arc_fading_in:bool = false
@@ -59,6 +62,7 @@ var _initial_drag_position:Vector2
 @export var _distance_curve_falloff:Curve
 @export var _enemy_spin_falloff:Curve
 @export var _bottle_flash_curve:Curve
+@export var _adjacency_curve:Curve
 
 @export var _status_label:Label
 @export var _charging_label:Label
@@ -93,10 +97,10 @@ var _mouse_speed_buildup: Vector2 = Vector2.ZERO
 
 @export var _mouse_speed_multiplier: float = 2000.0
 
-var _bottle_rotation_multiplier: float = 3.0
+var _bottle_rotation_multiplier: float = 6.0
 var _bottle_dampen_multiplier: float = 3.0
 var _bottle_angular_velocity:float = 0.0
-var _bottle_angular_velocity_treshold:float = 2
+var _bottle_angular_velocity_treshold:float = 1.25
 
 var _app_in_focus:bool = true
 
@@ -123,6 +127,7 @@ func _process(delta):
 	do_dragging(delta)
 	
 	fade_arc_visuals(delta)
+	adjacency_line_handle.points[1] = line_end_position
 	
 	if (GameManager.Main.get_player()._player_status != PlayerManager.PlayerStatus.IDLE \
 	or GameManager.Main._round_status != GameManager.RoundStatus.GAMEPLAY):
@@ -327,7 +332,7 @@ func calculate_bottle_rotation(delta):
 	dir = dir.rotated(deg_to_rad(-90))
 	var speedEval = _spin_curve.sample(dir.dot(_mouse_speed_buildup.normalized()))
 	#REVISE THIS WITH SOMETHING BETTER!!!
-	var tempMultiplier = _bottle_rotation_multiplier * (1 - _speed_buildup_falloff_curve.sample(abs(_bottle_angular_velocity) / _speed_treshold))
+	var tempMultiplier = _bottle_rotation_multiplier# * (1 - _speed_buildup_falloff_curve.sample(abs(_bottle_angular_velocity) / _speed_treshold))
 	var tempVelocity = deg_to_rad(speedEval * tempMultiplier * _mouse_speed_buildup.length())
 	
 	_bottle_angular_velocity = lerp(_bottle_angular_velocity,_bottle_angular_velocity+tempVelocity, delta)
@@ -335,7 +340,7 @@ func calculate_bottle_rotation(delta):
 	if !Input.is_action_pressed("main_click"):
 		dampen_bottle_spin(delta*15)
 	else:
-		dampen_bottle_spin(delta*5)
+		dampen_bottle_spin(delta)
 
 	_button_handle.rotation +=  _bottle_angular_velocity * delta# * _bottle_rotation_multiplier
 	
@@ -386,13 +391,17 @@ func eval_direction():
 	var top_direction_match = -1.01
 	var top_ability:Ability
 	var abilities_in_range:Array = []
-	
+
+	SimonTween.start_tween(_combo_handle,"scale",Vector2(-0.33,-0.33),G.anim_speed_slow,null).set_relative(true)
 	await SimonTween.start_tween(_combo_handle,"global_position",_bottle_spin_eval_position.global_position,G.anim_speed_slow,null).tween_finished 
 	start_arc_fade(true)
 	flash_bottle()
 	#await SimonTween.start_tween(_bottle_arc_visuals_handle,"modulate:a",1.0,1.0,null).set_relative(true).tween_finished
 	
 	for a in _ability_wheel_manager_handle._all_abilities:
+		a.adjacency_radius_green_off()
+		a.hide_green_highlight()
+		
 		var ability_dir = _bottle_center.global_position.direction_to(a.global_position)
 		print("Ability "+str(a.name)+" IS :"+str(rad_to_deg(ability_dir.angle())))
 		var bottle_dir = fmod(rad_to_deg(_button_handle.rotation),360.0)
@@ -401,11 +410,11 @@ func eval_direction():
 		
 		a.set_distance_to_hit(angle_diff)
 		if (abs(angle_diff) < (_bottle_arc_range/2.0)):
-			a.popup_ability_name()
+			#a.popup_ability_name()
 			#G.popup_text.emit(a._ability_name,a.global_position)
-			SimonTween.start_tween(_button_handle,"scale",Vector2(0.05,0.05),G.anim_speed_medium,_shake_curve).set_relative(true)
-			await SimonTween.start_tween(a,"scale",Vector2(1.2,1.2),0.5,_shake_curve).set_relative(true).tween_finished
-			await a.bright_flash()	
+			#SimonTween.start_tween(_button_handle,"scale",Vector2(0.05,0.05),G.anim_speed_medium,_shake_curve).set_relative(true)
+			#await SimonTween.start_tween(a,"scale",Vector2(1.2,1.2),0.5,_shake_curve).set_relative(true).tween_finished
+			#await a.bright_flash()	
 			abilities_in_range.append(a)
 			
 	#await get_tree().create_timer(0.5).timeout
@@ -415,12 +424,12 @@ func eval_direction():
 	var current_mag:int = 0
 	var break_loop:bool = false
 	
-	if (abilities_in_range.size() > 0):	
+	if (abilities_in_range.size() > 0):
 		#HIT!
 		var ab:Ability
 		var last_in_chain:bool = false
 		#Set critical hit if there's only ONE ability hit
-		var is_crit:bool = true if abilities_in_range.size() == 1 else false
+		var is_crit:bool = false
 		
 		#Sort to prioritize non-enemy abilities
 		abilities_in_range.sort_custom(func(a:Ability, b:Ability): \
@@ -436,7 +445,9 @@ func eval_direction():
 			ability_magnitude = 0.0
 			if (i >= (abilities_in_range.size() - 1)):
 				last_in_chain = true
-			current_mag = await evaluate_single_ability(ab,last_in_chain, true, true, is_crit)
+				
+				
+			current_mag = await evaluate_single_ability(ab,last_in_chain, true, true, true, is_crit)
 			ability_magnitude += current_mag
 			
 			#EXECUTE THE ABILITY
@@ -445,7 +456,6 @@ func eval_direction():
 				continue
 			
 			await _gm_handle._player_manager_handle.execute_ability(ab,ability_magnitude,true)
-			ab.lower_ability_name()
 			if (!_gm_handle._player_manager_handle.is_player_alive() or !_gm_handle._player_manager_handle.is_enemy_alive()):
 				#break
 				return
@@ -503,6 +513,9 @@ func evaluate_single_ability(ab:Ability, last_in_chain:bool = false, involve_com
 	
 	#ab.bright_flash()
 	#G.popup_text.emit(ab._ability_name,ab.global_position)
+	ab.popup_ability_name()
+	ab.show_green_highlight()
+	await get_tree().create_timer(G.anim_speed_medium).timeout
 	
 	var mag:int = ab.get_magnitude()
 	
@@ -511,15 +524,60 @@ func evaluate_single_ability(ab:Ability, last_in_chain:bool = false, involve_com
 		return mag
 	
 	if (ab._data._ability_type == AbilityData.Type.BUFF or ab._data._ability_type == AbilityData.Type.DEBUFF):
+		ab.lower_ability_name()
+		ab.damage_numbers_go_down()
+		ab.hide_green_highlight()
 		return mag
 	
 	await ab.damage_numbers_popup(mag)
 	
-	mag = await _gm_handle._player_manager_handle.evaluate_all_buffs(mag,ab._data,is_player)
+	mag += await _gm_handle._player_manager_handle.evaluate_all_buffs(mag,ab,is_player)
 	
 	
+	#Get adjacency bonuses
+	if !ab.is_enemy():
+		for b in _ability_wheel_manager_handle._all_abilities:
+			if b == ab:
+				continue
+				
+			if ab.global_position.distance_to(b.global_position) < b._data._ability_adjacency_range/2:
+				b.bright_flash()
+				#b.adjacency_radius_green_on()
+				var in_pos:Vector2 = b.global_position
+				match b._data._ability_adjacency_type:
+					AbilityData.AdjacencyType.EXTRA_DAMAGE:
+						b.popup_status_text("[color=GREEN]Damage boost")
+						#await SimonTween.start_tween(b,"global_position",ab.global_position - b.global_position,G.anim_speed_fast).set_relative(true).tween_finished
+						await b.line_to_location(ab.global_position)
+						await ab.bright_flash()
+						b.reset_line()
+						b.global_position = in_pos
+						#SimonTween.start_tween(b,"global_position",b.global_position-in_pos,G.anim_speed_fast).set_relative(true)
+						#await get_tree().create_timer(G.anim_speed_medium).timeout
+						b.global_position = in_pos
+						#b.adjacency_radius_green_off()
+						ab.damage_numbers_update(b._data._ability_adjacency_mag,"GREEN")
+						mag += b._data._ability_adjacency_mag
+					AbilityData.AdjacencyType.DESTROY_DEBUFF:
+						if ab._data._ability_type == AbilityData.Type.WHEEL_DEBUFF:
+							b.popup_status_text("[color=GREEN]Destroy debuffs")
+							await SimonTween.start_tween(b,"global_position",ab.global_position - b.global_position,G.anim_speed_fast).set_relative(true).tween_finished
+							await ab.bright_flash()
+							#await get_tree().create_timer(G.anim_speed_medium).timeout
+							b.global_position = in_pos
+							#b.adjacency_radius_green_off()
+							ab.destroy()
+							return false
+					AbilityData.AdjacencyType.HEAL:
+						_gm_handle._player_manager_handle.adjust_player_health(b._data._ability_adjacency_mag,PlayerManager.Op.PLUS)
+						b.popup_status_text("[color=GREEN]Heal!")
+						await b.line_to_location(ab.global_position)
+						await ab.bright_flash()
+						b.reset_line()
+						#await get_tree().create_timer(G.anim_speed_medium).timeout
+						b.global_position = in_pos
+						#b.adjacency_radius_green_off()
 	# Apply combo
-
 	if (involve_combos):
 		SimonTween.start_tween(_combo_counter_handle,"scale",Vector2(-0.5,-0.5),anim_time,_strike_curve).set_relative(true)
 		await SimonTween.start_tween(_combo_counter_handle,"global_position",ab.global_position-_combo_counter_handle.global_position-(_combo_counter_handle.size/2),anim_time,_strike_curve).set_relative(true).tween_finished
@@ -527,19 +585,24 @@ func evaluate_single_ability(ab:Ability, last_in_chain:bool = false, involve_com
 		
 		#Actually apply the combo stats
 		mag += _combo_number
-		await ab.damage_numbers_update(mag)
+		await ab.damage_numbers_update(_combo_number,"GOLD")
 	
-	#if (ab.get_distance_to_hit() < _bottle_crit_range and involve_crits):
-	if (is_crit):
+	if (ab.get_distance_to_hit() < _bottle_crit_range and involve_crits):
+	#if (is_crit):
 		#Handling critical hits
-		SimonTween.start_tween(_crit_handle,"scale",Vector2(1.4,1.4),G.anim_speed_medium,_shake_curve).set_relative(true)
-		await SimonTween.start_tween(_crit_handle,"modulate:a",1.0,G.anim_speed_medium).tween_finished
-		SimonTween.start_tween(_crit_handle,"scale",Vector2(-0.5,-0.5),anim_time,_strike_curve).set_relative(true)
-		await SimonTween.start_tween(_crit_handle,"global_position",ab.global_position-_crit_handle.global_position-(_crit_handle.size/2),anim_time,_strike_curve).set_relative(true).tween_finished
-		_crit_handle.modulate.a = 0
+		#SimonTween.start_tween(_crit_handle,"scale",Vector2(1.4,1.4),G.anim_speed_medium,_shake_curve).set_relative(true)
+		#await SimonTween.start_tween(_crit_handle,"modulate:a",1.0,G.anim_speed_medium).tween_finished
+		#SimonTween.start_tween(_crit_handle,"scale",Vector2(-0.5,-0.5),anim_time,_strike_curve).set_relative(true)
+		#await SimonTween.start_tween(_crit_handle,"global_position",ab.global_position-_crit_handle.global_position-(_crit_handle.size/2),anim_time,_strike_curve).set_relative(true).tween_finished
+		#_crit_handle.modulate.a = 0
 		#Actually apply crit stats
-		mag *= _bottle_crit_multiplier
-		await ab.damage_numbers_update(mag)
+		await line_to_location(_bottle_center.global_position,ab.global_position)
+		await  ab.popup_status_text("[color=RED]Critical hit!")
+		reset_line()
+		
+		var extra_crit_damage = (mag * _bottle_crit_multiplier) - mag
+		mag += extra_crit_damage
+		await ab.damage_numbers_update(extra_crit_damage,"RED")
 	
 	if (!last_in_chain):
 		SimonTween.start_tween(_combo_counter_handle,"modulate:a",1.0,G.anim_speed_slow)
@@ -547,7 +610,11 @@ func evaluate_single_ability(ab:Ability, last_in_chain:bool = false, involve_com
 		_combo_counter_handle.position = Vector2(0,0)
 		_combo_counter_handle.scale = Vector2(1,1)
 	
+	
+	await get_tree().create_timer(G.anim_speed_medium).timeout
 	await ab.damage_numbers_go_down()
+	ab.lower_ability_name()
+	ab.hide_green_highlight()
 	
 	return mag
 				
@@ -617,7 +684,6 @@ func eval_enemy():
 		
 		a.set_distance_to_hit(angle_diff)
 		if (abs(angle_diff) < (_enemy_bottle_data.arc_range / 2.0)):
-			a.popup_ability_name()
 			abilities_in_range.append(a)
 	
 	if (abilities_in_range.size() > 0):
@@ -627,9 +693,9 @@ func eval_enemy():
 			ab = abilities_in_range[i]
 			ability_magnitude = 0
 			
-			var current_mag = await evaluate_single_ability(ab, false, false, true, false)
+			var current_mag = await evaluate_single_ability(ab, false, false, true, false, false)
 			ability_magnitude += current_mag
-			G.execute_ability.emit(ab,ability_magnitude,false)
+			_gm_handle._player_manager_handle.execute_ability(ab,ability_magnitude,false)
 
 	_enemy_bottle_arc_visuals.material.set_shader_parameter("tint_color",Color(1.0,1.0,1.0,0.0))
 	change_state(BottleStatus.IDLE)
@@ -652,6 +718,17 @@ func on_flash_bottle_green():
 func update_bottle_arc_visuals():
 	_bottle_arc_visuals_handle.material.set_shader_parameter("progress",_bottle_arc_range / 360.0)
 	pass
+
+func line_to_location(start_pos:Vector2,pos:Vector2):
+	adjacency_line_handle.modulate.a = 0.0
+	line_end_position = Vector2.ZERO
+	adjacency_line_handle.points[0] = start_pos
+	SimonTween.start_tween(self,"line_end_position",global_position,G.anim_speed_fast).set_relative(true)
+	await SimonTween.start_tween(adjacency_line_handle,"modulate:a",1.0,G.anim_speed_fast).tween_finished
+	return true
+	
+func reset_line():
+	SimonTween.start_tween(self,"line_end_position",Vector2.ZERO,G.anim_speed_fast*2)
 						
 func reset_combo():
 	_combo_number = 0
@@ -664,6 +741,7 @@ func reset_combo():
 	_combo_counter_handle.position = Vector2(0,0)
 	_combo_counter_handle.scale = Vector2(1,1)
 	_combo_counter_handle.modulate.a = 1
+	_combo_handle.scale = Vector2.ONE
 	_crit_handle.position = Vector2(0,0)
 	_crit_handle.scale = Vector2(1,1)
 	_combo_handle.global_position = _bottle_center.global_position - (_combo_handle.size/2)

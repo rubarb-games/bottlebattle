@@ -71,6 +71,7 @@ func add_encounter_abilities(encounter:EnemyData):
 			print("WHEEL DEBUFF!")
 			
 			var wp = _bottle_center_marker.global_position + (Vector2.RIGHT.rotated(deg_to_rad(randf_range(0,360))) * _distance_to_center)
+			
 			i = add_ability(a,"enemy_on_player_wheel",-1,wp)
 			_temp_abilities.append(i)
 			#update_ability_layout_single(_bottle_center_marker,_all_abilities,i)
@@ -113,9 +114,9 @@ func remove_all_abilities():
 		remove_ability(a)
 	_all_abilities = []
 	
-func remove_ability(a:Ability):
+func remove_ability(a:Ability, instant:bool = false):
 	_all_abilities.erase(a)
-	a.destroy()
+	a.destroy(instant)
 	
 func add_ability(a:AbilityData,addToTarget:String, pos:float = -1, world_pos:Vector2 = Vector2.ZERO) -> Ability:
 	var instance = _ability_scene.instantiate() as Ability
@@ -127,7 +128,7 @@ func add_ability(a:AbilityData,addToTarget:String, pos:float = -1, world_pos:Vec
 	instance._ability_sprite.texture = a._ability_icon
 	instance._ability_name_handle.text = a._ability_name
 	instance.set_magnitude(a._magnitude)
-	instance.set_on_wheel()
+	
 	if (pos != -1):
 		instance._wheel_placement = pos
 	else:
@@ -226,7 +227,9 @@ func _process(delta):
 		var overlapping:bool = false
 		var overlapping_ability:Ability
 		for a in _all_abilities:
-			if (is_too_close_to_others_on_wheel(_dragged_ability,a,get_global_mouse_position()) and a != _dragged_ability):
+			if (get_global_mouse_position().distance_to(_bottle_center_marker.global_position) < _distance_to_center * 1.2 and \
+			is_too_close_to_others_on_wheel(_dragged_ability,a,get_global_mouse_position()) and a != _dragged_ability and \
+			(_dragged_ability.is_on_wheel() or _dragged_ability.is_in_inventory())):
 				a.adjacency_radius_turn_red()
 				overlapping_ability = a
 				overlapping = true
@@ -246,8 +249,11 @@ func _process(delta):
 				_dragged_ability.set_free()
 				goal_position = get_global_mouse_position()
 			elif overlapping:
-				goal_position = find_edge_of_radius(_dragged_ability,overlapping_ability,get_global_mouse_position())
+				#_dragged_ability.set_dehighlight()
+				#goal_position = find_edge_of_radius(_dragged_ability,overlapping_ability,get_global_mouse_position())
+				goal_position = calculate_closest_position_on_wheel(get_global_mouse_position())
 			else:
+				#_dragged_ability.set_normal()
 				goal_position = calculate_closest_position_on_wheel(get_global_mouse_position())
 		if (_dragged_ability.is_loot()):
 			goal_position = get_global_mouse_position()
@@ -259,7 +265,25 @@ func _process(delta):
 			goal_position = get_global_mouse_position()			
 	
 		_dragged_ability.global_position = lerp(_dragged_ability.global_position, goal_position, delta * 20)
+	elif _gm_handle._bottle_manager_handle._status == BottleManager.BottleStatus.IDLE:
+		var highlighted_objects:Array = []
 		
+		for b in _all_abilities:
+			if get_global_mouse_position().distance_to(b.global_position) < b._data._ability_range:
+				b.adjacency_radius_green_on()
+				for c in _all_abilities:
+					if c == b:
+						continue
+					
+					if c.global_position.distance_to(b.global_position) < b._data._ability_adjacency_range/2:
+						c.show_green_highlight()
+						highlighted_objects.append(c)
+			else:
+				b.adjacency_radius_green_off() 
+				
+		for d in _all_abilities:
+			if !highlighted_objects.has(d):
+				d.hide_green_highlight()
 
 func on_add_ability(ab:Ability, target:String, source:String):
 	var new_ab = add_ability(ab._data,target,-1,ab.global_position)
@@ -273,9 +297,12 @@ func on_add_ability(ab:Ability, target:String, source:String):
 			new_ab.reparent(_ability_parent)
 
 func on_drag_ability(ab:Ability):
-	if (_gm_handle.is_gameplay_phase() and !ab.is_on_wheel()):
-		print("Item is not on wheel, and we're in gameplay")
-		print(ab._status)
+	if (_gm_handle.is_gameplay_phase() and ab.is_in_inventory()):
+		G.popup_text.emit("No inventory in battle!", ab.global_position)
+		return
+
+	if (_gm_handle.is_gameplay_phase() and ab.is_loot()):
+		G.popup_text.emit("No loot in battle!", ab.global_position)
 		return
 		
 	if (ab.is_enemy()):
@@ -326,10 +353,16 @@ func on_stop_drag_ability(ab:Ability):
 		return
 		
 	if (_gm_handle.is_loot_phase() or _gm_handle.is_intro_phase()):
-		highlight_abilities(true)
+		pass
+		#highlight_abilities(true)
 		
-	var new_pos:Vector2 = calculate_closest_position_on_wheel(ab.global_position)
+	var new_pos:Vector2 = _initial_drag_position
+	var ability_to_replace:Ability = null
 	
+	#var instant_removal:bool = false
+	
+	#if (_dragging_overlapping and !_dragged_ability.is_free()):
+
 	var find_closest_in_range:Callable = (func(b):
 		for a in _all_abilities:
 			var distance = Vector2(a.global_position - b.global_position).length()
@@ -339,26 +372,31 @@ func on_stop_drag_ability(ab:Ability):
 		return null
 		)
 	
-	var ability_to_replace:Ability = null
-	if (ab.is_loot()):
+	if ab.is_loot():
 		ability_to_replace = find_closest_in_range.call(ab)
 		#On found an ability to replace!
 		if (is_instance_valid(ability_to_replace)):
+			G.popup_text.emit("Upgraded!",_dragged_ability.global_position)
 			new_pos = ability_to_replace.global_position
 			#If ability is the same, bump up the level instead
 			if (ability_to_replace._data._ability_name == ab._data._ability_name):
 				ability_to_replace.adjust_ability_level(1)
 				ability_to_replace = null
+				remove_ability(ab,true)
 				G.single_loot_picked.emit()
+				ab.green_flash()
 			else:
 				G.add_ability.emit(ab,"player","loot")
-			ab.green_flash()
+				remove_ability(ab,true)
 		else:
 			#Check if you should be able to place on wheel
 			if ab.global_position.distance_to(_bottle_center_marker.global_position) < (_distance_to_center * 1.2):
-				ab.set_on_wheel()
-				new_pos = ab.global_position
-				G.add_ability.emit(ab,"player","loot")
+				if !_dragging_overlapping:
+					new_pos = ab.global_position
+					G.add_ability.emit(ab,"player","loot")
+					remove_ability(ab,true)
+				else:
+					new_pos = _initial_drag_position
 			#Check if you place in your inventory
 			elif ab.global_position.distance_to(_player_inventory_handle.global_position) < 200.0:
 				new_pos = ab.global_position
@@ -366,23 +404,36 @@ func on_stop_drag_ability(ab:Ability):
 				G.add_ability.emit(ab,"inventory","loot")
 			else:
 				new_pos = _initial_drag_position
+	elif ab.is_on_wheel():
+		if ab.global_position.distance_to(_player_inventory_handle.global_position) < 200.0:
+			G.popup_text.emit("No inventory in battle!", ab.global_position)
+		elif !_dragging_overlapping:
+			new_pos = _dragged_ability.global_position
+		else:
+			G.popup_text.emit("Overlapping", ab.global_position)
+			new_pos = _initial_drag_position
 	elif ab.is_in_inventory():
-		if ab.global_position.distance_to(_bottle_center_marker.global_position) < (_distance_to_center * 1.2):
+		if ab.global_position.distance_to(_bottle_center_marker.global_position) < (_distance_to_center * 1.2) and \
+		!_dragging_overlapping:
 			#ab.set_inventory()
 			new_pos = ab.global_position
 			ability_to_replace = find_closest_in_range.call(ab)
 			if (ability_to_replace):
 				if ability_to_replace._ability_name == ab._ability_name:
 					ability_to_replace.adjust_ability_level(1)
-					ability_to_replace = null
-					remove_ability(ab)
+				else:
+					G.add_ability.emit(ab,"player","inventory")
+				remove_ability(ab, true)
 			else:
-				ability_to_replace = ab
+				#ability_to_replace = ab
 				G.add_ability.emit(ab,"player","inventory")
+				remove_ability(ab, true)
+			ability_to_replace = null
 		else:
 			new_pos = _initial_drag_position
 	elif ab.is_free():
-		if ab.global_position.distance_to(_player_inventory_handle.global_position) < (_distance_to_center * 1.2):
+		if ab.global_position.distance_to(_player_inventory_handle.global_position) < (_distance_to_center * 1.2) and \
+		!_dragging_overlapping:
 			new_pos = _dragged_ability.global_position
 			move_ability(_dragged_ability,"player","inventory")
 			_dragged_ability.set_inventory()
@@ -395,7 +446,7 @@ func on_stop_drag_ability(ab:Ability):
 	ab.bright_flash()
 	await SimonTween.start_tween(ab,"scale",Vector2(0.2,0.2),0.50,_shake_curve).set_relative(true).tween_finished
 	if (is_instance_valid(ability_to_replace)):
-		remove_ability(ability_to_replace)
+		remove_ability(ability_to_replace, true)
 		
 	_dragged_ability = null
 	_dragging_ability = false
@@ -412,10 +463,12 @@ func green_flash_abilities():
 			a.green_flash()
 
 func on_loot_start():
-	highlight_abilities(true)
+	pass
+	#highlight_abilities(true)
 	
 func on_loot_end():
-	highlight_abilities(false)
+	pass
+	#highlight_abilities(false)
 
 func on_start_encounter(enc:EnemyData):
 	add_encounter_abilities(enc)

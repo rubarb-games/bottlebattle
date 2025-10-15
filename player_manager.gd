@@ -12,6 +12,9 @@ static var Main:PlayerManager
 @export var _enemyHandle:Control
 @export var _enemyMarker:Marker2D
 
+@export var buff_line:Line2D
+var buff_line_end_point:Vector2 = Vector2.ZERO
+
 @export var _enemy_bottle_handle:Control
 @export var _player_bottle_handle:Control
 
@@ -78,8 +81,13 @@ func initialize_player():
 	_playerHealth = 20
 	_playerShield = 0
 	
+	buff_line.modulate.a = 0.0
+	
 	#Handles manually
 	#_player_sprite = X
+	
+func _process(delta: float) -> void:
+	buff_line.points[1] = buff_line_end_point
 	
 func start_gameplay_round():
 	start_new_encounter()
@@ -296,36 +304,49 @@ func add_buff(b:BuffData, is_player:bool = true):
 		instance.global_position = _enemy_buff_area_handle.global_position
 		instance.global_position.x -= (_all_enemy_buffs.size() * (instance.size.x - _buff_spacing))
 	
-func evaluate_all_buffs(mag:float, move:AbilityData,is_player:bool = true):
-	var arr_to_eval = _all_buffs
-	if (!is_player):
-		arr_to_eval = _all_enemy_buffs
-		
-	for b in arr_to_eval:
-		mag = await evaluate_buff(mag,b,move)
-		
-	return mag
+func evaluate_all_buffs(mag:float, move:Ability,is_player:bool = true):
+	var mag_adj = 0
+	var current_mag_adj = 0
+	if (is_player):
+		for b in _all_buffs:
+			current_mag_adj  = await evaluate_buff(mag,b,move)
+			mag_adj += current_mag_adj
+	else:
+		for b in _all_enemy_buffs:
+			current_mag_adj  = await evaluate_buff(mag,b,move)
+			mag_adj += current_mag_adj
+
+	return mag_adj
 	
-func evaluate_buff(mag:float,b:Buff,move:AbilityData):
+func evaluate_buff(mag:float,b:Buff,move:Ability):
 	var buff_affected:bool = false
 	var bd = b._data
+	var mag_adj = 0.0
 	
-	match move._ability_type:
+	match move._data._ability_type:
 		AbilityData.Type.DAMAGE:
 			match bd.type:
 				BuffData.Type.DAMAGE_UP:
-					if move._ability_target == AbilityData.Target.ENEMY:
-						mag += bd.magnitude
+					if move._data._ability_target == AbilityData.Target.ENEMY:
+						mag_adj = bd.magnitude
 						buff_affected = true
+						await line_to_location(b.global_position+(b.size/2),move.global_position)
+						move.damage_numbers_update(mag_adj,"BLUE")
+						await move.bright_flash()
+						await reset_line()
 				BuffData.Type.DAMAGE_REDUCTION:
-					if move._ability_target == AbilityData.Target.PLAYER:
-						mag = clamp(mag - bd.magnitude, 0, 100)
+					if move._data._ability_target == AbilityData.Target.PLAYER:
+						mag_adj = mag - bd.magnitude if mag > bd.magnitude else 0
+						await line_to_location(b.global_position+(b.size/2),move.global_position)
+						move.damage_numbers_update(mag_adj,"BLUE")
+						await move.bright_flash()
+						await reset_line()
 						buff_affected = true
 						
 	
 	if buff_affected:
 		await b.shake()
-	return mag
+	return mag_adj
 	
 	
 func remove_all_enemy_buffs():
@@ -340,17 +361,18 @@ func remove_buff(b:Buff):
 	update_buff_layout()
 
 func check_for_existing_buff(b:BuffData, is_player:bool = true):
-	var arr_to_check
 	if (is_player):
-		arr_to_check = _all_buffs
+		for d in _all_buffs:
+			if (b.name == d._data.name):
+				d.update_duration(-b.duration)
+				d.shake()
+				return true
 	else:
-		arr_to_check = _all_enemy_buffs
-		
-	for d in _all_buffs:
-		if (b.name == d._data.name):
-			d.update_duration(-b.duration)
-			d.shake()
-			return true
+		for d in _all_enemy_buffs:
+			if (b.name == d._data.name):
+				d.update_duration(-b.duration)
+				d.shake()
+				return true
 			
 	return false
 
@@ -367,6 +389,17 @@ func update_buff_layout():
 			b = _all_enemy_buffs[l]
 			b.global_position = _enemy_buff_area_handle.global_position
 			b.global_position.x -= (l * (b.size.x - _buff_spacing))
+
+func line_to_location(start_pos:Vector2,pos:Vector2):
+	buff_line.global_position = start_pos
+	buff_line.modulate.a = 0.0
+	buff_line_end_point = Vector2.ZERO
+	SimonTween.start_tween(self,"buff_line_end_point",pos - buff_line.global_position,G.anim_speed_fast).set_relative(true)
+	await SimonTween.start_tween(buff_line,"modulate:a",1.0,G.anim_speed_fast).tween_finished
+	return true
+	
+func reset_line():
+	SimonTween.start_tween(self,"buff_line_end_point",Vector2.ZERO,G.anim_speed_fast*2)
 
 func on_adjust_cash(adjustment:int):
 	print("ADDING CASH!!! "+str(adjustment))
